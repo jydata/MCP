@@ -1,6 +1,6 @@
 # MCP
-MCP = Multiple datasourse convert to target storage platform
+MCP = Multiple datasource convert to target storage platform
 
-datasourse:MySQL
+datasource:MySQL
 
 targetStorage:Phoenix(HBase), Iceberg
