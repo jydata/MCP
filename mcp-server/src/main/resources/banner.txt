@@ -1,0 +1,9 @@
+${AnsiColor.BRIGHT_BLUE}
+   _/_/_/  _/_/        _/_/_/        _/_/_/
+  _/    _/    _/    _/              _/    _/
+ _/    _/    _/    _/              _/    _/
+_/    _/    _/      _/_/_/        _/_/_/
+                                 _/
+                                _/
+MCP Server Version: ${mcp.server.version}
+${AnsiColor.BRIGHT_BLACK}

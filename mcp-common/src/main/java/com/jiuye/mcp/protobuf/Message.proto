@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+option java_package="com.jiuye.mcp.protobuf";
+option java_outer_classname = "Message";
+import "MessageType.proto";
+
+message MessageBase {
+     required string agentId = 1;
+     required MessageTypeBase type = 2;
+     optional string data = 3;
+}

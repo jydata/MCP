@@ -1,0 +1,55 @@
+syntax = "proto2";
+
+option java_package="com.jiuye.mcp.protobuf";
+option java_outer_classname = "MessageType";
+
+/**
+ * 指令类型
+}
+ */
+
+enum MessageTypeBase {
+    /**
+     * 验证
+     */
+    AUTH = 1;
+    /**
+     * 客户端到服务端ping
+     */
+    PING = 2;
+    /**
+     * 服务端到客户端pong
+     */
+    PONG = 3;
+    /**
+     * 客户端上传数据到服务端
+     */
+    UPLOAD_DATA = 4;
+    /**
+     * 服务端推送数据到客户端
+     */
+    PUSH_DATA = 5;
+
+    /**
+     * 验证返回
+     */
+    AUTH_BACK = 11;
+
+
+    UPLOAD_DATA_BACK = 14;
+
+    PUSH_DATA_BACK = 15;
+
+
+    /**
+      * 客户端将PK信息发送给服务端
+      */
+    COLUMN_PK = 16;
+
+
+    /**
+    *   服务端拒绝客户端连接
+    */
+    SERVER_REJECT_AGENT_CONNECTION = 17;
+
+}

@@ -1,0 +1,9 @@
+${AnsiColor.BRIGHT_BLUE}
+   _/_/_/  _/_/        _/_/_/        _/_/_/
+  _/    _/    _/    _/              _/    _/
+ _/    _/    _/    _/              _/    _/
+_/    _/    _/      _/_/_/        _/_/_/
+                                 _/
+                                _/
+MCP Agent Version: ${mcp.agent.version}
+${AnsiColor.BRIGHT_BLACK}

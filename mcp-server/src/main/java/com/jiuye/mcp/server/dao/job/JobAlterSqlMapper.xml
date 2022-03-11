@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobAlterSqlMapper" >
+    <resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.job.JobAlterSqlEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="alter_id" property="alterId" jdbcType="BIGINT" />
+	    <result column="job_id" property="jobId" jdbcType="BIGINT" />
+	    <result column="route_id" property="routeId" jdbcType="BIGINT" />
+	    <result column="src_schema_name" property="srcSchemaName" jdbcType="VARCHAR" />
+	    <result column="src_table_name" property="srcTableName" jdbcType="VARCHAR" />
+	    <result column="target_schema_name" property="targetSchemaName" jdbcType="VARCHAR" />
+	    <result column="target_table_name" property="targetTableName" jdbcType="VARCHAR" />
+	    <result column="src_alter_sql" property="srcAlterSql" jdbcType="VARCHAR" />
+	    <result column="target_alter_sql" property="targetAlterSql" jdbcType="VARCHAR" />
+	    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+  
+    <sql id="baseColumns">
+        alter_id, job_id, route_id, src_schema_name, src_table_name, target_schema_name, target_table_name, src_alter_sql, target_alter_sql, create_user, create_time, update_user, update_time
+    </sql>
+	
+	<sql id="baseSelectColumns">
+		<if test="(alterId != null and alterId !='')" >
+			and alter_id = #{alterId}
+		</if>
+		<if test="(jobId != null and jobId !='')" >
+			and job_id = #{jobId}
+		</if>
+		<if test="(routeId != null and routeId !='')" >
+			and route_id = #{routeId}
+		</if>
+		<if test="(srcSchemaName != null and srcSchemaName !='')" >
+			and src_schema_name = #{srcSchemaName}
+		</if>
+		<if test="(srcTableName != null and srcTableName !='')" >
+			and src_table_name = #{srcTableName}
+		</if>
+		<if test="(targetSchemaName != null and targetSchemaName !='')" >
+			and target_schema_name = #{targetSchemaName}
+		</if>
+		<if test="(targetTableName != null and targetTableName !='')" >
+			and target_table_name = #{targetTableName}
+		</if>
+		<if test="(srcAlterSql != null and srcAlterSql !='')" >
+			and src_alter_sql = #{srcAlterSql}
+		</if>
+		<if test="(targetAlterSql != null and targetAlterSql !='')" >
+			and target_alter_sql = #{targetAlterSql}
+		</if>
+		<if test="(createUser != null and createUser !='')" >
+			and create_user = #{createUser}
+		</if>
+		<if test="(createTime != null and createTime !='')" >
+			and create_time >= #{createTime} add <![CDATA[create_time <= #{createTime}]]>
+		</if>
+		<if test="(updateUser != null and updateUser !='')" >
+			and update_user = #{updateUser}
+		</if>
+		<if test="(updateTime != null and updateTime !='')" >
+			and update_time >= #{updateTime} add <![CDATA[update_time <= #{updateTime}]]>
+		</if>
+    </sql>
+	  
+    <select id="query" parameterType="java.util.Map"
+        resultType="com.jiuye.mcp.server.model.job.JobAlterSqlEntity">
+        select
+        <include refid="baseColumns" />
+        from job_alter_sql
+        where 1=1
+		<include refid="baseSelectColumns" />
+    </select>
+
+	<select id="queryTargetOperateDDL" resultType="java.lang.String">
+		SELECT target_alter_sql
+		FROM job_alter_sql
+		WHERE route_id = #{routeId, jdbcType=BIGINT}
+		AND src_schema_name = #{srcDbName, jdbcType=VARCHAR}
+		AND src_table_name = #{srcTableName, jdbcType=VARCHAR}
+		ORDER BY date_format(update_time, '%Y-%m-%d %H:%i:%S') desc
+		limit 1
+	</select>
+
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.job.JobAlterSqlEntity" >
+		insert into job_alter_sql(job_id, route_id, src_schema_name,src_table_name,target_schema_name,target_table_name, src_alter_sql, target_alter_sql,create_user,update_user)
+		values (
+		#{jobId,jdbcType=BIGINT},
+		#{routeId,jdbcType=BIGINT},
+
+		#{srcSchemaName,jdbcType=VARCHAR},
+		#{srcTableName,jdbcType=VARCHAR},
+
+		#{targetSchemaName,jdbcType=VARCHAR},
+		#{targetTableName,jdbcType=VARCHAR},
+
+		#{srcAlterSql,jdbcType=VARCHAR},
+		#{targetAlterSql,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
+		#{updateUser,jdbcType=VARCHAR}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.jiuye.mcp.server.model.job.JobAlterSqlEntity">
+        update job_alter_sql 
+		<set >
+			<if test="alterId != null" >alter_id=#{alterId,jdbcType=BIGINT UNSIGNED},</if>
+			<if test="jobId != null" >job_id=#{jobId,jdbcType=BIGINT},</if>
+			<if test="routeId != null" >route_id=#{routeId,jdbcType=BIGINT},</if>
+			<if test="srcSchemaName != null" >src_schema_name=#{srcSchemaName,jdbcType=VARCHAR},</if>
+			<if test="srcTableName != null" >src_table_name=#{srcTableName,jdbcType=VARCHAR},</if>
+			<if test="targetSchemaName != null" >target_schema_name=#{targetSchemaName,jdbcType=VARCHAR},</if>
+			<if test="targetTableName != null" >target_table_name=#{targetTableName,jdbcType=VARCHAR},</if>
+			<if test="srcAlterSql != null" >src_alter_sql=#{srcAlterSql,jdbcType=VARCHAR},</if>
+			<if test="targetAlterSql != null" >target_alter_sql=#{targetAlterSql,jdbcType=VARCHAR},</if>
+			<if test="createUser != null" >create_user=#{createUser,jdbcType=VARCHAR},</if>
+			<if test="createTime != null" >create_time=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="updateUser != null" >update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP},</if>
+		</set>
+        where id=#{id}
+    </update>
+
+</mapper>

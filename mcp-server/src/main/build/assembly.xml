@@ -1,0 +1,51 @@
+<assembly>
+    <id>${timestamp}</id>
+    <baseDirectory>${artifactId}-${version}-${timestamp}</baseDirectory>
+    <formats>
+        <!--<format>tar.gz</format>-->
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <!--不使用项目的artifact，第三方jar不要解压，打包进zip文件的lib目录-->
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <!-- 把项目脚本文件，打包进zip文件的根目录 -->
+        <fileSet>
+            <directory>${project.basedir}/src/main/build/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+        </fileSet>
+
+        <!-- 把配置文件，打包进zip文件的config目录 -->
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>**/*</include>
+                <include>*.xml</include>
+                <include>*.properties</include>
+                <include>*.jks</include>
+            </includes>
+        </fileSet>
+
+        <!-- 把jar，打进zip文件的根目录 -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

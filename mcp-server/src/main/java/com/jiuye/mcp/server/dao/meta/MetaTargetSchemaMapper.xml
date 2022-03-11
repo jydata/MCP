@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaTargetSchemaMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaTargetSchemaEntity" >
+	    <result column="schema_id" property="schemaId" jdbcType="BIGINT" />
+	    <result column="target_id" property="targetId" jdbcType="BIGINT" />
+	    <result column="target_name" property="targetName" jdbcType="VARCHAR" />
+	    <result column="schema_name" property="schemaName" jdbcType="VARCHAR" />
+	    <result column="execute_flag" property="executeFlag" jdbcType="BIT" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+	    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+	<sql id="baseColumns">
+        schema_id, target_id, target_name, schema_name, execute_flag, delete_flag, create_user, date_format(create_time, '%Y-%m-%d %H:%i:%S') as createTime, update_user, date_format(update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+    </sql>
+
+	<sql id="baseSelectColumns">
+		<if test="(schemaId != null and schemaId != 0)">
+			and schema_id = #{schemaId}
+			and delete_flag = 1
+		</if>
+		<if test="(schemaName != null and schemaName !='')">
+			and schema_name = #{schemaName}
+		</if>
+		<if test="(executeFlag != null and executeFlag !='')">
+			and execute_flag = #{executeFlag}
+		</if>
+		<if test="(deleteFlag != null and deleteFlag !='')">
+			and delete_flag = #{deleteFlag}
+		</if>
+		<if test="(targetId != null and targetId != '')">
+			and target_id = #{targetId}
+		</if>
+		<if test="(targetName != null and targetName != '')">
+			and target_name = #{targetName}
+		</if>
+	</sql>
+
+	<select id="queryName" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT schema_name
+		FROM meta_target_schema
+		WHERE schema_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+	<select id="queryList" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetSchemaEntity"
+			resultMap="baseResultMap">
+		SELECT <include refid="baseColumns" />
+		FROM meta_target_schema
+		WHERE 1=1
+		<include refid="baseSelectColumns" />
+		order by date_format(update_time, '%Y-%m-%d %H:%i:%S') desc
+	</select>
+
+	<select id="queryBySchemaId" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT <include refid="baseColumns" />
+		FROM meta_target_schema
+		WHERE schema_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+	<select id="queryCount" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetSchemaEntity"
+			resultType="java.lang.Integer">
+		SELECT count(1) as cnt FROM meta_target_schema
+		WHERE 1=1
+		<if test="flag == 3">
+			AND delete_flag = "1"
+		</if>
+		AND schema_name = #{schemaName, jdbcType=VARCHAR}
+	</select>
+
+	<!-- query schema -->
+	<select id="querySchemaByRouteId" parameterType="java.lang.Long" resultMap="baseResultMap">
+		select mts.schema_id as schema_id, mts.schema_name as schema_name, mts.target_id as target_id, mts.target_name as target_name
+		from meta_dataroute md
+		left join meta_target_schema mts
+		on md.target_id = mts.target_id
+		where md.route_id = #{_parameter, jdbcType=BIGINT}
+		and mts.execute_flag = 1
+	</select>
+
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetSchemaEntity">
+		insert into meta_target_schema (target_id, target_name, schema_name, create_time, create_user, update_time)
+		values (
+			#{targetId,jdbcType=BIGINT},
+			#{targetName,jdbcType=VARCHAR},
+			#{schemaName,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetSchemaEntity">
+		update meta_target_schema
+		<set >
+			<if test="schemaName != null">schema_name=#{schemaName,jdbcType=VARCHAR},</if>
+			<if test="executeFlag != null">execute_flag=#{executeFlag,jdbcType=INTEGER},</if>
+			<if test="deleteFlag != null">delete_flag=#{deleteFlag,jdbcType=VARCHAR},</if>
+			<if test="createUser != null">create_user=#{createUser,jdbcType=VARCHAR},</if>
+			<if test="updateUser != null">update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null">update_time=#{updateTime,jdbcType=TIMESTAMP}</if>
+		</set>
+		where schema_id = #{schemaId,jdbcType=BIGINT}
+	</update>
+
+</mapper>

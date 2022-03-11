@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaConvertDataTypeMapper" >
+
+    <resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaConvertDataTypeEntity" >
+	    <result column="source_type" property="sourceType" jdbcType="VARCHAR" />
+	    <result column="source_data_type" property="sourceDataType" jdbcType="VARCHAR" />
+	    <result column="target_type" property="targetType" jdbcType="VARCHAR" />
+	    <result column="target_data_type" property="targetDataType" jdbcType="VARCHAR" />
+    </resultMap>
+  
+    <sql id="baseColumns">
+        source_type, source_data_type, target_type, target_data_type
+    </sql>
+	
+	<sql id="baseSelectColumns">
+		<if test="(sourceType != null and sourceType !='')" >
+				and source_type = #{sourceType}
+		</if>
+		<if test="(sourceDataType != null and sourceDataType !='')" >
+				and source_data_type = #{sourceDataType}
+		</if>
+		<if test="(targetType != null and targetType !='')" >
+				and target_type = #{targetType}
+		</if>
+		<if test="(targetDataType != null and targetDataType !='')" >
+				and target_data_type = #{targetDataType}
+		</if>
+    </sql>
+	  
+    <select id="queryList" parameterType="com.jiuye.mcp.server.model.meta.MetaConvertDataTypeEntity"
+        resultMap="baseResultMap">
+        select
+        <include refid="baseColumns" />
+        from meta_convert_data_type
+        where 1=1
+		<include refid="baseSelectColumns" />
+    </select>
+
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.meta.MetaConvertDataTypeEntity">
+        insert into meta_convert_data_type(source_type, source_data_type, target_type, target_data_type)
+        values (
+            #{sourceType,jdbcType=VARCHAR},
+            #{sourceDataType,jdbcType=VARCHAR},
+            #{targetType,jdbcType=VARCHAR},
+            #{targetDataType,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.jiuye.mcp.server.model.meta.MetaConvertDataTypeEntity">
+        update meta_convert_data_type 
+		<set >
+            <if test="sourceType != null" >source_type=#{sourceType,jdbcType=VARCHAR},</if>
+            <if test="sourceDataType != null" >source_data_type=#{sourceDataType,jdbcType=VARCHAR},</if>
+            <if test="targetType != null" >target_type=#{targetType,jdbcType=VARCHAR},</if>
+            <if test="targetDataType != null" >target_data_type=#{targetDataType,jdbcType=VARCHAR},</if>
+		</set>
+        where source_type=#{sourceType,jdbcType=VARCHAR}
+        AND target_type=#{targetType,jdbcType=VARCHAR}
+    </update>
+</mapper>

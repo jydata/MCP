@@ -1,0 +1,416 @@
+/*所有标签样式*/
+*{margin:0;padding:0;font-family:'微软雅黑';}
+/*去除长按a链接弹框*/
+html,body{-webkit-touch-callout:none;font-size: 14px;height: 100%}
+/*去除默认样式*/
+ul,ol,li{list-style:none;}
+/*表格边框合并，边框距零*/
+table{border-collapse:collapse;border-spacing:0;}
+/*继承父元素的字体系列样式*/
+input,select,textarea,button{font-family:inherit;}
+/*清除浮动*/
+.fl{float:left;}
+.fr{float:right;}
+/*浮动强制*/
+.floatcommon_left{  float: left!important; }
+.floatcommon_right{  float: right!important;  }
+
+.clearfix{zoom:1;}
+.clearfix:after,.cf:before{content:"";display:table;clear:both;overflow:hidden;}
+.clear{clear: both;}
+/*字体大小*/
+.f12{font-size: 12px;}
+.f14{font-size: 14px;}
+.f16{font-size: 16px;}
+.f18{font-size: 18px;}
+.f20{font-size: 20px;}
+/*dispaly:none*/
+.mt5{margin-top: 5px;}
+.mt10{margin-top: 10px;}
+.mt20{margin-top: 20px;}
+.mt30{margin-top: 30px;}
+.mb5{margin-bottom: 5px;}
+.mb10{margin-bottom: 10px;}
+.mb20{margin-bottom: 20px;}
+.mb30{margin-bottom: 30px;}
+.ml5{margin-left: 5px}
+.ml10{margin-left: 10px}
+.ml20{margin-left: 20px}
+.mr5{margin-right: 5px;}
+.mr10{margin-right: 10px;}
+.mr20{margin-right: 20px;}
+.pr20{padding-right: 20px;}
+.pb10{padding-bottom: 10px}
+.pb20{padding-bottom: 20px}
+.none{display: none;}
+.dflex{display: flex;}
+.bg{background: #fff;}
+/*显示省略号...*/
+.limit{white-space: nowrap;text-overflow: ellipsis;-o-text-overflow: ellipsis;overflow: hidden;}
+/*a链接*/
+.c-333{color: #333;}
+.c-666{color: #666;}
+.c-999{color: #999;}
+.c-ff0{color: #FF0000;}
+.bg-fff{background-color: #FFFFFF}
+/*去除点击高亮效果*/
+a,button,input,img,label{-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;outline:medium none;border: none;}
+input::-moz-focus-inner{border:none;padding:0;}
+select, input{vertical-align:baseline;}
+
+input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{color:#ccc;}
+input:-moz-placeholder,textarea:-moz-placeholder{color:#ccc;}
+/*html5标签*/
+header,footer,section,article,aside,nav,figure{display:block;}
+/*长英文字母 数字 换行*/
+p, .word-break {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/*去除默认样式*/
+h1,h2,h3,h4,h5,h6,strong,i,em,address, caption, cite, code, dfn, th, var{font-weight:normal;font-style:normal;margin:0;}
+fieldset,img{border:none;display:block;}
+a{text-decoration:none;}
+
+.relative{position: relative;}
+
+.omit {white-space: nowrap;text-overflow: ellipsis;-o-text-overflow: ellipsis;overflow: hidden;display: block; }
+
+/*去除左边栏*/
+.content-wrapper{margin-left: 0 !important;}
+
+.wrapper{overflow: auto !important;background-color: #ecf0f5 !important;}
+
+/*公共按钮样式*/
+.el-button.el-button--default{padding: 6px 15px;margin-left: 5px;font-size: 12px;}
+.el-button--default:hover, .el-button--default:focus{border-color: #f0f0f0;color: #7eb4e2}
+.el-button.el-button-search{
+  background: #2c3b41;font-size: 12px; color: #fff;border: none;margin-left: 10px;
+  &:hover{background: #00a7d0;color: #fff;}
+}
+
+.el-button--text{color: #7eb4e2;}
+.el-button--primary{background-color: #7eb4e2;border-color: #7eb4e2;}
+.el-button--primary:focus, .el-button--primary:hover{background-color: #0a568c;border-color: #0a568c;}
+/*公共checked样式*/
+.el-checkbox__input.is-checked .el-checkbox__inner{background-color: #7eb4e2;border-color: #7eb4e2}
+.el-checkbox__input.is-checked+.el-checkbox__label{color: #7eb4e2}
+/*公共标签页样式*/
+.el-tabs__item.is-active{color: #7eb4e2}
+.el-tabs__item:hover{color: #7eb4e2}
+
+/*公共输入框样式样式*/
+.el-input__inner{
+  width: 100px;
+  height: 25px ;
+  line-height: 25px;
+  border: 1px solid #D8DCE3;
+  border-radius: 2px;
+  padding: 0 2px 0 5px;
+  font-size: 13px;
+  &:focus{
+    border: 1px solid #d1d1d1;
+  }
+}
+
+/*公共select样式样式*/
+.el-select{
+  .el-input__icon{line-height: normal;}
+  .el-input__inner:focus{border-color: #d1d1d1}
+  .el-input.is-focus .el-input__inner{border-color: #D8DCE3}
+}
+
+
+/*table公共样式*/
+.el-table th{background: #205081;color: #fff;padding: 0;}
+.el-table td{background: #fff;padding: 0;color: #333;.cell{line-height: 20px;}}
+.el-table td .el-tooltip{cursor: pointer;}
+.el-table {
+  .el-table__body tr.current-row > td{background: #e5f0f3;}
+  .el-table__body tr.edit-row > td{background: #f1dfdf; color: #ffffff}
+  .el-table__body tr.edit-row > td .icon-save{color: #ffffff}
+  .el-table--enable-row-hover .el-table__body tr:hover>td{background: #D6EEF9;}
+  .el-table__body-wrapper{overflow: auto;}
+  .el-select{
+    .el-input__icon{line-height: normal;}
+  }
+  .el-input__inner{height: 21px;line-height: 21px;}
+  .el-button{padding: 0;font-size: 13px;}
+}
+.table-overflow-x-hidden{
+  .el-table__body-wrapper{
+    overflow-x: hidden;
+  }
+}
+.el-table thead.is-group th {
+  background: #8BC8E4;
+  color: #fff;
+  padding: 0;
+}
+.el-table .ascending .sort-caret.ascending{border-bottom-color: #0a568c}
+.el-table .descending .sort-caret.descending{border-top-color: #0a568c}
+
+/*通用样式-------table css---行 css*/
+.el-table th>.cell,.el-table tr {
+  height:30px;
+  line-height: 30px;
+}
+.el-table tr>.cell,.el-table tr {
+  height:25px;
+  line-height: 25px;
+}
+
+/*动态表，标题高度auto*/
+.dynamic-header th>.cell{
+  height:auto;
+  line-height: 30px;
+}
+
+/*pagination分页样式*/
+.el-pagination{
+  padding: 10px 0;
+  margin-left: 20px;
+  span.el-pagination__total{font-size: 12px;height: 25px;line-height: 25px;}
+  .el-input__icon{line-height: normal;}
+  .el-pager{
+    li{
+      height: 25px;line-height: 25px;font-weight: normal;font-size: 12px;padding: 0;
+    }
+    li.number{margin: 0 2px;}
+    li.more{line-height: 25px;}
+    li.active{color: #93cff2}
+  }
+  span.el-pagination__sizes{
+    height: 25px;line-height: 25px;
+    .el-select{height: 25px;line-height: 25px;
+      .el-input{.el-input__inner{height: 24px;line-height: 24px;font-size: 12px;}}
+      .el-input.is-focus .el-input__inner{border-color: #0a568c}}
+  }
+  .btn-prev,.btn-next{
+    height: 25px;line-height: 25px;
+  }
+  .el-pagination__jump {
+    .el-pagination__editor{.el-input__inner{height: 25px;line-height: 25px;font-size: 12px;}}
+  }
+}
+.el-select-dropdown__item,.el-select-dropdown__item.selected {font-weight: normal;font-size: 12px;}
+.el-select-dropdown__item.selected { color: #205081}
+
+/*公共的el-dialog*/
+.el-dialog{
+  .el-dialog__header{
+    padding: 0;background: #205081;height: 30px;line-height: 30px;
+    .el-dialog__title{font-size: 14px;margin-left: 10px;color: #fff;}
+    .el-dialog__headerbtn{top: 0;right: 10px;
+      .el-dialog__close{font-size: 16px;color: #fff;} } }
+  .el-dialog__body{padding: 15px 20px;}
+  .el-dialog__footer{
+    .dialog-footer{
+      .el-button{
+        &:first-child{color: #333;}
+        &:last-child{color: #fff;background: #2c3b41;}
+      }
+    }
+  }
+}
+/* tooltip --- style */
+.el-tooltip__popper.is-dark{
+  max-width: 40%;
+}
+
+/*fade-transform*/
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: opacity .2s ease;
+}
+.fade-transform-enter, .fade-transform-leave-to{opacity: 0;}
+
+/* form --- style */
+.el-form{
+  .el-form-item{
+    margin-bottom: 0;
+    .el-form-item__label{
+      font-weight: normal;
+    }
+    .el-form-item.is-success{border-color: #0b7fad;}
+    &:last-child{
+      text-align: right;
+    }
+  }
+}
+
+/*错误提示信息样式*/
+.item-error{.el-form-item__error{top: 85%;line-height: 0}}
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  background-color: #eff3f7;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #bfd4ea;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background: #3775b5;
+}
+/* 垂直滚动条的滑动块 */
+::-webkit-scrollbar-thumb:vertical:hover {
+  max-height: 60px;
+}
+
+/* custom class */
+/*搜索区域公共样式(自适用各个分辨率)*/
+.content-flag {
+  background-color: #fff;
+  padding: 10px;
+}
+
+/*页面标题*/
+.main-title {
+  color: #6E6E6E;
+  font-size: 16px;
+}
+
+/*副标题*/
+.secondary-title {
+  color: #6E6E6E;
+  font-size: 14px;
+}
+
+.btn-flag {
+  margin-left: 10px !important;
+}
+
+.el-input__icon {
+  line-height: inherit;
+}
+/*树状图选中颜色*/
+.el-tree-node__children .is-current .el-tree-node__content .el-tree-node__label {
+  color: #319FD6;
+}
+/*上传文件*/
+.import-tain-upload{display: inline-block}
+.import-tain-upload .el-upload__input,.import-tain-upload input[type=file]{display: none}
+
+/*按钮主色调 蓝色*/
+.brandPrimaryBtn {
+  background-color: #7d7e7f;
+  color: #ffffff;
+}
+
+/*表格上面的标签 合同样本sear带折叠*/
+.updown{float: left;  width: 100%;  height: auto; margin-top: 10px }
+
+/*合同签订编辑-------------*/
+/*input 录入页面一行三个input*/
+.input-common-col {
+  height: 32px;
+  margin-top: 8px;
+  margin-bottom: 8px
+}
+/*合同签订-》新增页面-》副标题*/
+.add-secondary-title {
+  background-color: #F1F8FF;
+  height: 32px;
+  line-height: 32px;
+  padding-left: 10px;
+}
+
+/*合同签订-》审批-------do------*/
+.input-add-tag .el-input__inner:focus {
+  border: 0px;
+}
+
+//el-input钉钉搜索去掉边框
+.input-add-tag .el-input__inner {
+  border: 0px;
+}
+
+.children-tree .el-tree-node__expand-icon {
+  color: transparent;
+}
+
+//钉钉去掉横向滚动
+.dingtalk-user-table .el-table__body-wrapper {
+  overflow-x: hidden;
+}
+
+//钉钉用户搜索table
+.dingtalk-user-table th {
+  background: transparent;
+  color: #333333;
+}
+
+//钉钉用户table
+.dingtalk-user-table tr {
+  height: 60px;
+}
+
+.it-arrow {
+  .el-breadcrumb__inner {
+    color: #40A0D4;
+  }
+}
+
+//审批钉钉-------do------
+
+/*必填的红色*右边 */
+.input-common-col .el-form-item.is-required .el-form-item__label:before {
+  float: right;
+}
+
+/*必填提示语 文字*/
+.input-common-col .el-form--label-left .el-form-item__label {
+  margin-bottom: 0px;
+}
+/*必填提示语 文字 大小*/
+.input-common-col .el-form-item__error{
+  font-size: 10px;
+}
+/*必填提示语 显示位置*/
+.input-common-col .el-form-item__error {
+  z-index: 1;
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+/*MCP统一样式*/
+.header {background: #fff;padding: 8px 10px;
+  .top {
+    .left {float: left;}
+    .right {float: right;}
+  }
+  .down{margin-top: 10px;
+    .list {
+      margin-bottom: 5px;
+      font-size: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      .press{float: left;margin-right: 30px;
+        .key{
+          display: inline-block;
+          width: 110px;
+          text-align: right;
+          padding-right: 5px;
+          color: #6e6e6e;}
+        .el-input{width: 180px} } } } }
+/*-----------*/
+
+
+
+

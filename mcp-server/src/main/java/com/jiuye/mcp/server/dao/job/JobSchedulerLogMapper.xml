@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobSchedulerLogMapper" >
+
+    <resultMap id="baseLogMap" type="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" >
+        <result column="log_id" property="logId" jdbcType="BIGINT" />
+        <result column="job_id" property="jobId" jdbcType="BIGINT" />
+        <result column="job_name" property="jobName" jdbcType="VARCHAR" />
+        <result column="job_type" property="jobType" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="BIGINT" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="group_id" property="groupId" jdbcType="BIGINT" />
+        <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+        <result column="agent" property="agent" jdbcType="VARCHAR" />
+        <result column="cron" property="cron" jdbcType="VARCHAR" />
+        <result column="route_id" property="routeId" jdbcType="BIGINT" />
+        <result column="route_name" property="routeName" jdbcType="VARCHAR" />
+        <result column="source_id" property="sourceId" jdbcType="BIGINT" />
+        <result column="source_name" property="sourceName" jdbcType="VARCHAR" />
+        <result column="target_id" property="targetId" jdbcType="BIGINT" />
+        <result column="target_name" property="targetName" jdbcType="VARCHAR" />
+        <result column="target_schema_id" property="targetSchemaId" jdbcType="BIGINT" />
+        <result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+        <result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
+        <result column="bus_start_time" property="busStartTime" jdbcType="TIMESTAMP" />
+        <result column="bus_end_time" property="busEndTime" jdbcType="TIMESTAMP" />
+        <result column="binlog_name" property="binlogName" jdbcType="VARCHAR" />
+        <result column="binlog_position" property="binlogPosition" jdbcType="BIGINT" />
+        <result column="sched_address" property="schedAddress" jdbcType="VARCHAR" />
+        <result column="sched_handler" property="schedHandler" jdbcType="VARCHAR" />
+        <result column="sched_param" property="schedParam" jdbcType="VARCHAR" />
+        <result column="trigger_time" property="triggerTime" jdbcType="TIMESTAMP" />
+        <result column="trigger_code" property="triggerCode" jdbcType="INTEGER" />
+        <result column="trigger_msg" property="triggerMsg" jdbcType="VARCHAR" />
+        <result column="handle_time" property="handleTime" jdbcType="TIMESTAMP" />
+        <result column="handle_end_time" property="handleEndTime" jdbcType="TIMESTAMP" />
+        <result column="handle_code" property="handleCode" jdbcType="INTEGER" />
+        <result column="handle_msg" property="handleMsg" jdbcType="VARCHAR" />
+        <result column="progress_rate" property="progressRate" jdbcType="VARCHAR" />
+        <result column="duration" property="duration" jdbcType="VARCHAR" />
+        <result column="schedule_type" property="scheduleType" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumns">
+        log_id, job_id, job_name, job_type, project_id, project_name, group_id, group_name, agent, cron, route_id, route_name, source_id, source_name, target_id, target_name, target_schema_id, rule_id, rule_name, bus_start_time, bus_end_time, binlog_name, binlog_position, sched_address, sched_handler, sched_param, trigger_time, trigger_code, trigger_msg, handle_time, handle_end_time, handle_code, handle_msg, progress_rate
+    </sql>
+
+    <select id="queryLogRunning" parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" resultMap="baseLogMap">
+    select a.log_id,
+           a.job_id,
+           a.project_name,
+           a.job_name,
+           a.group_name,
+           a.route_name,
+           a.source_name,
+           a.target_name,
+           a.handle_time,
+           a.trigger_time,
+           c.status
+      from job_scheduler_log a
+      left join (select job_id,max(log_id) as log_id from job_scheduler_log group by job_id ) b
+        on a.log_id = b.log_id
+      left join job_define c
+        on a.job_id = c.job_id
+     where c.status = 'running'
+       and b.log_id is not null
+    </select>
+
+    <select id="queryLogFail" parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" resultMap="baseLogMap">
+        select a.log_id,
+               a.job_id,
+               a.project_name,
+               a.job_name,
+               a.group_name,
+               a.route_name,
+               a.source_name,
+               a.target_name,
+               a.handle_time,
+               a.trigger_time,
+               b.status
+          from job_scheduler_log a
+          left join job_define b
+            on a.job_id = b.job_id
+         where b.status = 'fail'
+    </select>
+
+    <select id="queryLog" parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" resultMap="baseLogMap">
+        select
+        <include refid="baseColumns" />
+        ,TIMESTAMPDIFF(SECOND, handle_time, handle_end_time) as duration
+        ,(case cron when "" then "only once" when cron then "cron job" else "only one" end) as schedule_type
+        from job_scheduler_log
+        where 1=1
+        <if test="logId != null and logId != 0">
+            and log_id=#{logId, jdbcType=BIGINT}
+        </if>
+        <if test="jobId != null and jobId != 0">
+            and job_id=#{jobId, jdbcType=BIGINT}
+        </if>
+        <if test="triggerTime != null and triggerTime != ''">
+            and trigger_time = #{triggerTime, jdbcType=Timestamp}
+        </if>
+        <if test="(handleCode != null and handleCode != 0)" >
+            and handle_code = #{handleCode, jdbcType=INTEGER}
+        </if>
+        order by trigger_time desc
+        limit 100
+    </select>
+
+    <select id="queryLogInfo"  parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" resultMap="baseLogMap">
+        select
+        <include refid="baseColumns" />
+        from job_scheduler_log
+        where job_id = #{jobId, jdbcType=BIGINT}
+        and  handle_code = #{handleCode, jdbcType=INTEGER}
+    </select>
+
+    <update id="updateLog" parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity">
+        update job_scheduler_log
+        <set >
+            <if test="binlogName != null" >binlog_name=#{binlogName,jdbcType=VARCHAR},</if>
+            <if test="binlogPosition != null" >binlog_position=#{binlogPosition,jdbcType=BIGINT},</if>
+            <if test="handleTime != null" >handle_time=#{handleTime,jdbcType=TIMESTAMP},</if>
+            <if test="handleEndTime != null" >handle_end_time=#{handleEndTime,jdbcType=TIMESTAMP},</if>
+            <if test="handleCode != null" >handle_code=#{handleCode,jdbcType=INTEGER},</if>
+            <if test="handleMsg != null" >handle_msg=#{handleMsg,jdbcType=VARCHAR},</if>
+            <if test="progressRate != null" >progress_rate=#{progressRate,jdbcType=VARCHAR},</if>
+        </set>
+        where log_id = #{logId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateRunning2Fail">
+        update job_scheduler_log SET handle_code= 500
+        where handle_code = 300
+        AND ((job_type in ('increment', 'full', 'ddl')) or (job_type = 'metadata' and route_id = 0))
+    </update>
+
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.job.JobSchedulerLogEntity" useGeneratedKeys="true" keyProperty="logId" >
+        insert into job_scheduler_log(log_id, job_id, job_name, job_type, project_id, project_name, group_id, group_name, agent, cron, route_id, route_name, source_id, source_name, target_id, target_name, target_schema_id, rule_id, rule_name, bus_start_time, bus_end_time, binlog_name, binlog_position, sched_address, sched_handler, sched_param, trigger_time, trigger_code, trigger_msg, handle_time, handle_end_time, handle_code, handle_msg, progress_rate)
+        values (
+            #{logId,jdbcType=BIGINT},
+            #{jobId,jdbcType=BIGINT},
+            #{jobName,jdbcType=VARCHAR},
+            #{jobType,jdbcType=VARCHAR},
+            #{projectId,jdbcType=BIGINT},
+            #{projectName,jdbcType=VARCHAR},
+            #{groupId,jdbcType=BIGINT},
+            #{groupName,jdbcType=VARCHAR},
+            #{agent,jdbcType=VARCHAR},
+            #{cron,jdbcType=VARCHAR},
+            #{routeId,jdbcType=BIGINT},
+            #{routeName,jdbcType=VARCHAR},
+            #{sourceId,jdbcType=BIGINT},
+            #{sourceName,jdbcType=VARCHAR},
+            #{targetId,jdbcType=BIGINT},
+            #{targetName,jdbcType=VARCHAR},
+            #{targetSchemaId,jdbcType=BIGINT},
+            #{ruleId,jdbcType=BIGINT},
+            #{ruleName,jdbcType=VARCHAR},
+            #{busStartTime,jdbcType=TIMESTAMP},
+            #{busEndTime,jdbcType=TIMESTAMP},
+            #{binlogName,jdbcType=VARCHAR},
+            #{binlogPosition,jdbcType=BIGINT},
+            #{schedAddress,jdbcType=VARCHAR},
+            #{schedHandler,jdbcType=VARCHAR},
+            #{schedParam,jdbcType=VARCHAR},
+            #{triggerTime,jdbcType=TIMESTAMP},
+            #{triggerCode,jdbcType=INTEGER},
+            #{triggerMsg,jdbcType=VARCHAR},
+            #{handleTime,jdbcType=TIMESTAMP},
+            #{handleEndTime,jdbcType=TIMESTAMP},
+            #{handleCode,jdbcType=INTEGER},
+            #{handleMsg,jdbcType=VARCHAR},
+            #{progressRate,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="queryFreshLog" parameterType="java.lang.Long" resultMap="baseLogMap">
+        select
+        <include refid="baseColumns" />
+        from job_scheduler_log
+        where job_id = #{jobId, jdbcType=BIGINT}
+        AND handle_code = 300
+        order by log_id desc
+        limit 1
+    </select>
+</mapper>

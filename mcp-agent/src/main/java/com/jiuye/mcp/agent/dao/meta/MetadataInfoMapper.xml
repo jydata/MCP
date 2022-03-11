@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.agent.dao.meta.MetadataInfoMapper">
+
+	<select id="getMySQLColumnAll" resultType="com.jiuye.mcp.agent.model.MySQLSourceColumnEntity">
+		select
+			concat_ws('.',src_id,table_schema,table_name) as srcDBTable,
+			ordinal_position -1 as columnPos,
+			column_name as columnName,
+			column_key as columnKey
+		from meta_mysql_columns
+		order by src_id,table_schema,table_name,ordinal_position
+	</select>
+
+	<select id="getMcpRouteConnAll" resultType="com.jiuye.mcp.agent.model.McpRouteConnEntity">
+		select
+			a.route_id as routeId,
+			a.source_id as sourceId,
+			b.ip,b.port,b.username,b.password,
+			a.target_id as targetId,
+			c.datasource_name as datasourceName
+
+		from meta_dataroute a
+		left join meta_conn_links b on a.source_id = b.link_id
+		left join (select
+						meta.link_id,
+						data.dict_name as datasource_name
+					from
+					meta_conn_links meta
+					left join sys_dict data
+					on meta.datasource_id = data.dict_id) c on a.target_id = c.link_id
+	</select>
+</mapper>
+

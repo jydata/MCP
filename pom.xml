@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- 基本信息 -->
+    <description>mcp team in jiuye</description>
+    <modelVersion>4.0.0</modelVersion>
+    <name>mcp</name>
+    <packaging>pom</packaging>
+
+    <!-- 项目说明：这里作为聚合工程的父工程 -->
+    <groupId>com.jiuye.mcp</groupId>
+    <artifactId>mcp</artifactId>
+    <version>1.0.0</version>
+    <url>http://maven.apache.org</url>
+
+    <!-- 继承说明：这里继承SpringBoot提供的父工程 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+    </parent>
+
+    <!-- 模块说明：这里声明多个子模块 -->
+    <modules>
+        <module>mcp-common</module>
+        <module>mcp-server</module>
+        <module>mcp-agent</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <common.version>1.0.5</common.version>
+        <server.version>1.0.0</server.version>
+        <agent.version>1.0.0</agent.version>
+    </properties>
+
+    <!-- 版本说明：这里统一管理依赖的版本号 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.jiuye.mcp</groupId>
+                <artifactId>mcp-common</artifactId>
+                <version>${common.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jiuye.mcp</groupId>
+                <artifactId>mcp-server</artifactId>
+                <version>${server.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jiuye.mcp</groupId>
+                <artifactId>mcp-agent</artifactId>
+                <version>${agent.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>timestamp</name>
+                            <pattern>yyyyMMddHHmm</pattern>
+                            <timeZone>GMT+8</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>service_releases</id>
+            <url>http://nexus.sh-jiuye.com.cn/nexus/content/repositories/jiuyescm-service-api-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>service_snapshot</id>
+            <url>http://nexus.sh-jiuye.com.cn/nexus/content/repositories/jiuyescm-service-api-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

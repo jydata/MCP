@@ -1,0 +1,11 @@
+export const isDebug = process.env.is_debug;
+export const credentials = !process.env.is_debug;
+export const loginUrl = process.env.login_url;
+export const logoutUrl = process.env.logout_url;
+export const page = 1;
+export const pageSize = 20;
+export const pageSizes = [20, 30, 50];
+export const login_jiuyescm_ticket = process.env.login_jiuyescm_ticket;
+export const ticket = {login_jiuyescm_ticket: login_jiuyescm_ticket};
+export const apiUrl = process.env.API_ROOT;
+export const constDifDay = 90;// 创建时间差90天

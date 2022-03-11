@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaDdlRulesMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaDdlRulesEntity" >
+		<result column="id" property="id" jdbcType="BIGINT" />
+		<result column="route_id" property="routeId" jdbcType="BIGINT" />
+		<result column="src_schema_name" property="srcSchemaName" jdbcType="VARCHAR" />
+		<result column="src_table_name" property="srcTableName" jdbcType="VARCHAR" />
+		<result column="target_schema_id" property="targetSchemaId" jdbcType="BIGINT" />
+		<result column="target_schema_name" property="targetSchemaName" jdbcType="VARCHAR" />
+		<result column="target_table_name" property="targetTableName" jdbcType="VARCHAR" />
+		<result column="rule_id" property="ruleId" jdbcType="BIGINT" />
+		<result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
+		<result column="rule_type" property="ruleType" jdbcType="VARCHAR" />
+		<result column="rule_prefix" property="rulePrefix" jdbcType="VARCHAR" />
+		<result column="rule_column" property="ruleColumn" jdbcType="VARCHAR" />
+		<result column="src_schema_column" property="srcSchemaColumn" jdbcType="VARCHAR" />
+		<result column="db_flag" property="dbFlag" jdbcType="INTEGER" />
+		<result column="begin_index" property="beginIndex" jdbcType="INTEGER" />
+		<result column="end_index" property="endIndex" jdbcType="INTEGER" />
+		<result column="where_clause" property="whereClause" jdbcType="VARCHAR" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="ruleCount" property="ruleCount" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="baseColumns">
+		id, route_id, src_schema_name, src_table_name, target_schema_id, target_schema_name, target_table_name, rule_id, rule_name, rule_type, rule_prefix, rule_column, src_schema_column, db_flag, begin_index, end_index, where_clause, create_user, create_time, update_user, update_time
+	</sql>
+
+	<sql id="baseSelectColumns">
+		<if test="(routeId != null and routeId !='')" >
+			and route_id = #{routeId}
+		</if>
+		<if test="(srcSchemaName != null and srcSchemaName !='')" >
+			and src_schema_name = #{srcSchemaName}
+		</if>
+		<if test="(srcTableName != null and srcTableName !='')" >
+			and src_table_name = #{srcTableName}
+		</if>
+		<if test="(targetSchemaId != null and targetSchemaId !='')" >
+			and target_schema_id = #{targetSchemaId}
+		</if>
+		<if test="(targetSchemaName != null and targetSchemaName !='')" >
+			and target_schema_name = #{targetSchemaName}
+		</if>
+		<if test="(ruleId != null and ruleId !='')" >
+			and rule_id = #{ruleId}
+		</if>
+		<if test="(ruleName != null and ruleName !='')" >
+			and rule_name = #{ruleName}
+		</if>
+		<if test="(ruleType != null and ruleType !='')" >
+			and rule_type = #{ruleType}
+		</if>
+		<if test="(rulePrefix != null and rulePrefix !='')" >
+			and rule_prefix = #{rulePrefix}
+		</if>
+		<if test="(ruleColumn != null and ruleColumn !='')" >
+			and rule_column = #{ruleColumn}
+		</if>
+		<if test="(dbFlag != null and dbFlag !='')" >
+			and db_flag = #{dbFlag}
+		</if>
+		<if test="(beginIndex != null and beginIndex !='')" >
+			and begin_index = #{beginIndex}
+		</if>
+		<if test="(endIndex != null and endIndex !='')" >
+			and end_index = #{endIndex}
+		</if>
+		<if test="(whereClause != null and whereClause !='')" >
+			and where_clause = #{whereClause}
+		</if>
+		<if test="(createUser != null and createUser !='')" >
+			and create_user = #{createUser}
+		</if>
+		<if test="(createTime != null and createTime !='')" >
+			and create_time >= #{createTime} and create_time <![CDATA[<=]]> #{createTime}
+		</if>
+		<if test="(updateUser != null and updateUser !='')" >
+			and update_user = #{updateUser}
+		</if>
+		<if test="(updateTime != null and updateTime !='')" >
+			and update_time >= #{updateTime} and update_time <![CDATA[<=]]> #{updateTime}
+		</if>
+	</sql>
+
+	<select id="query" parameterType="com.jiuye.mcp.server.model.meta.MetaDdlRulesEntity"
+			resultMap="baseResultMap">
+		select
+		<include refid="baseColumns" />
+		from meta_ddl_rules
+		where 1=1
+		<include refid="baseSelectColumns" />
+	</select>
+
+	<select id="queryByRouteIdAndTarSchemaId"  resultMap="baseResultMap">
+		select
+		<include refid="baseColumns" />
+		from meta_ddl_rules
+		where route_id = #{routeId,jdbcType=BIGINT}
+		and target_schema_id = #{tarSchemaId,jdbcType=BIGINT}
+	</select>
+
+	<select id="queryByJobId" resultMap="baseResultMap">
+		select mdr.*
+		from meta_ddl_rules mdr
+		left join job_sync_table jst on mdr.id = jst.ddl_rule_id
+		WHERE jst.job_id = #{jobId,jdbcType=BIGINT}
+	</select>
+
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.meta.MetaDdlRulesEntity">
+		insert into meta_ddl_rules(route_id, src_schema_name, src_table_name, target_schema_id, target_schema_name, target_table_name, rule_id, rule_name, rule_type, rule_prefix, rule_column, src_schema_column, db_flag, begin_index, end_index, where_clause, create_user, create_time, update_user, update_time)
+		values (
+		#{routeId,jdbcType=BIGINT},
+		#{srcSchemaName,jdbcType=VARCHAR},
+		#{srcTableName,jdbcType=VARCHAR},
+		#{targetSchemaId,jdbcType=BIGINT},
+		#{targetSchemaName,jdbcType=VARCHAR},
+		#{targetTableName,jdbcType=VARCHAR},
+		#{ruleId,jdbcType=BIGINT},
+		#{ruleName,jdbcType=VARCHAR},
+		#{ruleType,jdbcType=VARCHAR},
+		#{rulePrefix,jdbcType=VARCHAR},
+		#{ruleColumn,jdbcType=VARCHAR},
+		#{srcSchemaColumn,jdbcType=VARCHAR},
+		#{dbFlag,jdbcType=INTEGER},
+		#{beginIndex,jdbcType=INTEGER},
+		#{endIndex,jdbcType=INTEGER},
+		#{whereClause,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{updateUser,jdbcType=VARCHAR},
+		#{updateTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<insert id="saveBatch" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" separator=";">
+			insert into meta_ddl_rules(route_id, src_schema_name, src_table_name, target_schema_id, target_schema_name, target_table_name, rule_id, rule_name, rule_type, rule_prefix, rule_column, src_schema_column, db_flag, begin_index, end_index, where_clause, create_user, update_user)
+			values
+			(
+			#{item.routeId,jdbcType=BIGINT},
+			#{item.srcSchemaName,jdbcType=VARCHAR},
+			#{item.srcTableName,jdbcType=VARCHAR},
+			#{item.targetSchemaId,jdbcType=BIGINT},
+			#{item.targetSchemaName,jdbcType=VARCHAR},
+			#{item.targetTableName,jdbcType=VARCHAR},
+			#{item.ruleId,jdbcType=BIGINT},
+			#{item.ruleName,jdbcType=VARCHAR},
+			#{item.ruleType,jdbcType=VARCHAR},
+			#{item.rulePrefix,jdbcType=VARCHAR},
+			#{item.ruleColumn,jdbcType=VARCHAR},
+			#{item.srcSchemaColumn,jdbcType=VARCHAR},
+			#{item.dbFlag,jdbcType=INTEGER},
+			#{item.beginIndex,jdbcType=INTEGER},
+			#{item.endIndex,jdbcType=INTEGER},
+			#{item.whereClause,jdbcType=VARCHAR},
+			#{item.createUser,jdbcType=VARCHAR},
+			#{item.updateUser,jdbcType=VARCHAR}
+			)
+			ON DUPLICATE KEY UPDATE
+			target_schema_name = #{item.targetSchemaName,jdbcType=VARCHAR},
+			target_table_name = #{item.targetTableName,jdbcType=VARCHAR},
+			rule_id = #{item.ruleId,jdbcType=BIGINT},
+			rule_name = #{item.ruleName,jdbcType=VARCHAR},
+			rule_type = #{item.ruleType,jdbcType=VARCHAR},
+			rule_prefix = #{item.rulePrefix,jdbcType=VARCHAR},
+			rule_column = #{item.ruleColumn,jdbcType=VARCHAR},
+			src_schema_column = #{item.srcSchemaColumn,jdbcType=VARCHAR},
+			db_flag = #{item.dbFlag,jdbcType=INTEGER},
+			begin_index = #{item.beginIndex,jdbcType=INTEGER},
+			end_index = #{item.endIndex,jdbcType=INTEGER},
+			where_clause = #{item.whereClause,jdbcType=VARCHAR},
+			update_user = #{item.updateUser,jdbcType=VARCHAR}
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.jiuye.mcp.server.model.meta.MetaDdlRulesEntity">
+		update meta_ddl_rules
+		<set >
+			<if test="srcSchemaName != null" >src_schema_name=#{srcSchemaName,jdbcType=VARCHAR},</if>
+			<if test="srcTableName != null" >src_table_name=#{srcTableName,jdbcType=VARCHAR},</if>
+			<if test="targetSchemaId != null" >target_schema_id=#{targetSchemaId,jdbcType=BIGINT},</if>
+			<if test="targetSchemaName != null" >target_schema_name=#{targetSchemaName,jdbcType=VARCHAR},</if>
+			<if test="ruleId != null" >rule_id=#{ruleId,jdbcType=BIGINT},</if>
+			<if test="ruleName != null" >rule_name=#{ruleName,jdbcType=VARCHAR},</if>
+			<if test="ruleType != null" >rule_type=#{ruleType,jdbcType=VARCHAR},</if>
+			<if test="rulePrefix != null" >rule_prefix=#{rulePrefix,jdbcType=VARCHAR},</if>
+			<if test="ruleColumn != null" >rule_column=#{ruleColumn,jdbcType=VARCHAR},</if>
+			<if test="srcSchemaColumn != null" >src_schema_column=#{srcSchemaColumn,jdbcType=VARCHAR},</if>
+			<if test="beginIndex != null" >begin_index=#{beginIndex,jdbcType=INTEGER},</if>
+			<if test="endIndex != null" >end_index=#{endIndex,jdbcType=INTEGER},</if>
+			<if test="createUser != null" >create_user=#{createUser,jdbcType=VARCHAR},</if>
+			<if test="createTime != null" >create_time=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="updateUser != null" >update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP},</if>
+		</set>
+		where route_id = #{routeId,jdbcType=BIGINT}
+	</update>
+
+	<select id="queryRuleName" parameterType="com.jiuye.mcp.server.model.meta.MetaDdlRulesEntity" resultMap="baseResultMap">
+		select rule_name, count(1) as ruleCount
+		from meta_ddl_rules
+		where route_id = #{routeId, jdbcType=BIGINT}
+		and src_schema_name = #{srcSchemaName, jdbcType=VARCHAR}
+		group by rule_name
+		order by ruleCount desc
+		limit 1
+	</select>
+
+	<select id="queryTableInfoCount" parameterType="java.lang.Long" resultMap="baseResultMap">
+		select route_id, src_schema_name, count(src_table_name) as tableCount
+		from meta_ddl_rules
+		where route_id = #{routeId, jdbcType=BIGINT}
+		group by src_schema_name
+	</select>
+
+	<select id="queryTargetTablesByJob" resultType="java.lang.Integer">
+		SELECT count(target_table_name) as targetTableCount
+		FROM meta_ddl_rules
+		where route_id = #{routeId, jdbcType=BIGINT}
+		and target_schema_id = #{targetSchemaId, jdbcType=BIGINT}
+	</select>
+
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaTargetDdlMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaTargetDdlEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="route_id" property="routeId" jdbcType="BIGINT" />
+	    <result column="route_name" property="routeName" jdbcType="VARCHAR" />
+	    <result column="schema_id" property="schemaId" jdbcType="BIGINT" />
+	    <result column="src_db_name" property="srcDbName" jdbcType="VARCHAR" />
+	    <result column="src_table_name" property="srcTableName" jdbcType="VARCHAR" />
+	    <result column="target_db_name" property="targetDbName" jdbcType="VARCHAR" />
+	    <result column="target_table_name" property="targetTableName" jdbcType="VARCHAR" />
+	    <result column="index_table_name" property="indexTableName" jdbcType="VARCHAR" />
+	    <result column="ddl_sql" property="ddlSql" jdbcType="VARCHAR" />
+	    <result column="index_sql" property="indexSql" jdbcType="VARCHAR" />
+	    <result column="execute_flag" property="executeFlag" jdbcType="BIT" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+		<result column="modify_ddl_flag" property="modifyDdlFlag" jdbcType="BIT" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="baseColumns">
+        id, route_id, route_name, schema_id, src_db_name, src_table_name, target_db_name, target_table_name, index_table_name, ddl_sql, index_sql, execute_flag, delete_flag, modify_ddl_flag, create_user, create_time, update_user, update_time
+    </sql>
+	
+	<sql id="baseSelectColumns">
+		<if test="(schemaId != null and schemaId !=0)">
+			and schema_id = #{schemaId}
+		</if>
+		<if test="(routeName != null and routeName !='')">
+			and route_name LIKE CONCAT(CONCAT('%',#{routeName}),'%')
+		</if>
+		<if test="(targetDbName != null and targetDbName !='')">
+			and target_db_name LIKE CONCAT(CONCAT('%',#{targetDbName}),'%')
+		</if>
+		<if test="(executeFlag != null )">
+			and execute_flag = #{executeFlag}
+		</if>
+		<if test="(routeId != null and routeId !=0)">
+			and route_id = #{routeId}
+		</if>
+		<if test="(srcDbName != null and srcDbName !='')">
+			and src_db_name LIKE CONCAT(CONCAT('%',#{srcDbName}),'%')
+		</if>
+		<if test="(srcTableName != null and srcTableName !='')">
+			and src_table_name = #{srcTableName}
+		</if>
+		<if test="(targetTableName != null and targetTableName !='')">
+			and target_table_name = #{targetTableName}
+		</if>
+		<if test="(indexTableName != null and indexTableName !='')">
+			and index_table_name = #{indexTableName}
+		</if>
+	</sql>
+	  
+	<select id="querySqlList" resultMap="baseResultMap">
+		SELECT target_db_name, target_table_name, ddl_sql
+		FROM meta_target_ddl
+		WHERE execute_flag = '1'
+		AND delete_flag = '1'
+		<if test="(targetSchemaId != null and targetSchemaId != 0)">
+			AND schema_id = #{targetSchemaId,jdbcType=VARCHAR}
+		</if>
+		<if test="(targetTableName != null and targetTableName != '')">
+			AND target_table_name = #{targetTableName,jdbcType=VARCHAR}
+		</if>
+		order by date_format(create_time, '%Y-%m-%d %H:%i:%S') asc
+	</select>
+
+	<select id="query" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetDdlEntity" resultMap="baseResultMap">
+		SELECT
+        <include refid="baseColumns" />
+		FROM meta_target_ddl
+		WHERE execute_flag = '1'
+		AND delete_flag = '1'
+		AND route_id = #{routeId, jdbcType=BIGINT}
+		AND schema_id = #{schemaId, jdbcType=BIGINT}
+		AND src_db_name = #{srcDbName, jdbcType=VARCHAR}
+		AND src_table_name = #{srcTableName, jdbcType=VARCHAR}
+		AND target_db_name = #{targetDbName, jdbcType=VARCHAR}
+		AND target_table_name = #{targetTableName, jdbcType=VARCHAR}
+		AND index_table_name = #{indexTableName, jdbcType=VARCHAR}
+		order by date_format(create_time, '%Y-%m-%d %H:%i:%S') desc
+		limit 1
+	</select>
+
+	<select id="queryById" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		<include refid="baseColumns" />
+		FROM meta_target_ddl
+		WHERE id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+	<select id="queryList" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetDdlEntity"
+			resultMap="baseResultMap">
+		SELECT id, route_id, route_name, schema_id, src_db_name, src_table_name, target_db_name, target_table_name,
+		index_table_name, ddl_sql, index_sql, execute_flag, delete_flag, modify_ddl_flag,
+		create_user, date_format(create_time, '%Y-%m-%d %H:%i:%S') as createTime,
+		update_user, date_format(update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+		FROM meta_target_ddl
+		WHERE 1 = 1
+		<include refid="baseSelectColumns"/>
+		order by date_format(create_time, '%Y-%m-%d %H:%i:%S') desc
+	</select>
+
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetDdlEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into meta_target_ddl (route_id, route_name, schema_id, src_db_name, src_table_name, target_db_name, target_table_name,
+		index_table_name, ddl_sql, index_sql, modify_ddl_flag, create_user, update_user)
+		values (
+		#{routeId, jdbcType=BIGINT},
+		#{routeName, jdbcType=VARCHAR},
+		#{schemaId, jdbcType=BIGINT},
+		#{srcDbName, jdbcType=VARCHAR},
+		#{srcTableName, jdbcType=VARCHAR},
+		#{targetDbName, jdbcType=VARCHAR},
+		#{targetTableName, jdbcType=VARCHAR},
+		#{indexTableName, jdbcType=VARCHAR},
+		#{ddlSql, jdbcType=VARCHAR},
+		#{indexSql, jdbcType=VARCHAR},
+		#{modifyDdlFlag, jdbcType=BIT},
+		#{createUser, jdbcType=VARCHAR},
+		#{updateUser, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into meta_target_ddl (route_id, route_name, schema_id, src_db_name, src_table_name, target_db_name, target_table_name,
+		index_table_name, ddl_sql, index_sql, modify_ddl_flag, create_user, update_user)
+		values
+		<foreach collection="list" item="item" separator=",">
+			 (
+				#{item.routeId, jdbcType=BIGINT},
+				#{item.routeName, jdbcType=VARCHAR},
+				#{item.schemaId, jdbcType=BIGINT},
+				#{item.srcDbName, jdbcType=VARCHAR},
+				#{item.srcTableName, jdbcType=VARCHAR},
+				#{item.targetDbName, jdbcType=VARCHAR},
+				#{item.targetTableName, jdbcType=VARCHAR},
+				#{item.indexTableName, jdbcType=VARCHAR},
+				#{item.ddlSql, jdbcType=VARCHAR},
+				#{item.indexSql, jdbcType=VARCHAR},
+		     	#{item.modifyDdlFlag, jdbcType=BIT},
+				#{item.createUser, jdbcType=VARCHAR},
+				#{item.updateUser, jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<update id="updateExecuteFlag" parameterType="com.jiuye.mcp.server.model.meta.MetaTargetDdlEntity">
+		update meta_target_ddl
+		set execute_flag = 1
+		where id = #{id, jdbcType=INTEGER}
+	</update>
+
+</mapper>

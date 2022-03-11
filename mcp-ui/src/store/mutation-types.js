@@ -1,0 +1,6 @@
+export const ADD_TO_TAB = 'ADD_TO_TAB';
+export const REMOVE_FROM_TAB = 'REMOVE_FROM_TAB';
+export const SET_DASHBOARD_ACTIVE = 'SET_DASHBOARD_ACTIVE';
+export const SET_TAB_ACTIVE = 'SET_TAB_ACTIVE';
+export const SET_TAB_VIEW_NAME = 'SET_TAB_VIEW_NAME';
+export const SET_TAB_LABEL = 'SET_TAB_LABEL';

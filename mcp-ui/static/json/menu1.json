@@ -1,0 +1,26 @@
+{
+  "code": "SUCCESS",
+  "message": "",
+  "items":[
+    {
+      "menuName": "Project",
+      "menuUrl": "/project",
+      "childrens": [
+        {
+          "menuName": "Project List",
+          "menuUrl": "/project/ProjectList"
+        }
+      ]
+    },
+    {
+      "menuName": "User",
+      "menuUrl": "/user",
+      "childrens": [
+        {
+          "menuName": "User List",
+          "menuUrl": "/user/UserList"
+        }
+        ]
+    }
+  ]
+}

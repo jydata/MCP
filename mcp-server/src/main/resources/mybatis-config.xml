@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<!-- sql日志输出 -->
+	<!--	<setting name="logImpl" value="STDOUT_LOGGING"/>-->
+	</settings>
+
+	<!--<plugins>
+	    <plugin interceptor="com.github.pagehelper.PageHelper">
+	        <property name="dialect" value="mysql"/>
+	        <property name="offsetAsPageNum" value="true"/>
+	        <property name="rowBoundsWithCount" value="true"/>
+	        <property name="pageSizeZero" value="true"/>
+	        <property name="reasonable" value="true"/>
+	        <property name="params" value="pageNum=start;pageSize=limit;pageSizeZero=zero;reasonable=heli;count=contsql"/>
+	    </plugin>
+	</plugins>-->
+	
+</configuration>

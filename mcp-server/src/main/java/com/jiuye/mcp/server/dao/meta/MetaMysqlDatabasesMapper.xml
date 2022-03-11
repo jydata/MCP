@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaMysqlDatabasesMapper" >
+
+    <!-- query linkEntity -->
+    <select id="count" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(schema_name)
+        FROM meta_mysql_databases
+        where src_id = #{_parameter, jdbcType=BIGINT}
+    </select>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into meta_mysql_databases(src_id, catalog_name, schema_name, default_character_set_name, default_collation_name, sql_path)
+        values
+        <foreach collection="list" item="dbInfo" index="index" separator=",">
+            (
+            #{dbInfo.srcId,jdbcType=INTEGER},
+            #{dbInfo.catalogName,jdbcType=VARCHAR},
+            #{dbInfo.schemaName,jdbcType=VARCHAR},
+            #{dbInfo.defaultCharacterSetName,jdbcType=VARCHAR},
+            #{dbInfo.defaultCollationName,jdbcType=VARCHAR},
+            #{dbInfo.sqlPath,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <!-- query source db -->
+    <select id="querySchemaName" parameterType="java.lang.Long" resultType="java.lang.String">
+        select schema_name
+        from meta_mysql_databases
+        where src_id = #{_parameter, jdbcType=BIGINT}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM meta_mysql_databases
+        WHERE src_id = #{srcId,jdbcType=BIGINT}
+        AND schema_name IN
+        <foreach collection="syncList" item="item" separator="," open="(" close=")">
+            #{item.dbName,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+</mapper>

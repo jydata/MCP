@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaConnLinksMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaConnLinksEntity">
+		<result column="link_id" property="linkId" jdbcType="BIGINT"/>
+		<result column="link_name" property="linkName" jdbcType="VARCHAR"/>
+		<result column="url" property="url" jdbcType="VARCHAR"/>
+		<result column="driver" property="driver" jdbcType="VARCHAR"/>
+		<result column="ip" property="ip" jdbcType="VARCHAR"/>
+		<result column="port" property="port" jdbcType="VARCHAR"/>
+		<result column="db_name" property="dbName" jdbcType="VARCHAR"/>
+		<result column="username" property="username" jdbcType="VARCHAR"/>
+		<result column="password" property="password" jdbcType="VARCHAR"/>
+		<result column="datasource_id" property="datasourceId" jdbcType="INTEGER"/>
+		<result column="datasource_type" property="datasourceType" jdbcType="INTEGER"/>
+		<result column="execute_flag" property="executeFlag" jdbcType="INTEGER"/>
+		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		<result column="createTime" property="createTime" jdbcType="VARCHAR"/>
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		<result column="updateTime" property="updateTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<!-- link -->
+	<sql id="baseLinkColumns">
+		link_id, link_name, url, driver, ip, port, db_name, username, password, datasource_id, datasource_type, execute_flag, create_user, date_format(create_time, '%Y-%m-%d %H:%i:%S') as createTime, update_user, date_format(update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+	</sql>
+
+	<!-- link -->
+	<sql id="linkColumns">
+		mcl.link_id, mcl.link_name, mcl.url, mcl.driver, mcl.ip, mcl.port, mcl.db_name, mcl.username, mcl.password, mcl.datasource_id, mcl.datasource_type,
+		mcl.execute_flag, mcl.create_user, date_format(mcl.create_time, '%Y-%m-%d %H:%i:%S') as createTime, mcl.update_user, date_format(mcl.update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+	</sql>
+
+	<sql id="baseLinkSelectColumns">
+		<if test="(username != null and username !='')">
+			and username = #{userName}
+		</if>
+		<if test="(dbName != null and dbName !='')">
+			and db_name = #{dbName}
+		</if>
+		<if test="(ip != null and ip !='')">
+			and ip = #{ip}
+		</if>
+		<if test="(linkName != null and linkName !='')">
+			and link_name = #{linkName}
+		</if>
+		<if test="(createTime != null and createTime !='')">
+			and create_time <![CDATA[>=]]> #{createTime} and create_time <![CDATA[<=]]> #{createTime}
+		</if>
+	</sql>
+
+	<!-- link begin -->
+	<select id="queryLinkList" parameterType="com.jiuye.mcp.server.model.meta.MetaConnLinksEntity"
+			resultMap="baseResultMap">
+		SELECT
+		<include refid="baseLinkColumns"/>
+		FROM meta_conn_links
+		where 1 = 1
+		<if test="(dsType != null and dsType =='source')">
+			and datasource_type = 0
+		</if>
+		<if test="(dsType != null and dsType =='target')">
+			and datasource_type = 1
+		</if>
+		<if test="datasourceType != null">
+			and datasource_type = #{datasourceType}
+		</if>
+		<include refid="baseLinkSelectColumns"/>
+		order by execute_flag ASC, date_format(update_time, '%Y-%m-%d %H:%i:%S') desc
+	</select>
+
+	<!-- query link byRouteId -->
+	<select id="querySourceLinkByRouteId" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		<include refid="linkColumns"/>
+		FROM meta_conn_links mcl
+		left join meta_dataroute md
+		on mcl.link_id = md.source_id
+		where md.route_id = #{routeId, jdbcType=BIGINT}
+	</select>
+
+	<!-- query link byRouteId -->
+	<select id="queryTargetLinkByRouteId" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		<include refid="linkColumns"/>
+		FROM meta_conn_links mcl
+		left join meta_dataroute md
+		on mcl.link_id = md.target_id
+		where md.route_id = #{routeId, jdbcType=BIGINT}
+	</select>
+
+	<select id="queryLinkInfo" parameterType="java.lang.Long"
+			resultMap="baseResultMap">
+		SELECT
+		<include refid="baseLinkColumns"/>
+		FROM meta_conn_links
+		where 1 = 1
+		<if test="(_parameter != null and _parameter !='')">
+			and link_id = #{ _parameter }
+		</if>
+	</select>
+
+	<insert id="saveConn" parameterType="com.jiuye.mcp.server.model.meta.MetaConnLinksEntity">
+		insert into meta_conn_links (link_name, url, driver, ip, port, db_name, username, password, datasource_id, datasource_type, execute_flag, create_user, create_time, update_user, update_time)
+		values (
+		#{linkName,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR},
+		#{driver,jdbcType=VARCHAR},
+		#{ip,jdbcType=VARCHAR},
+		#{port,jdbcType=VARCHAR},
+		#{dbName,jdbcType=VARCHAR},
+		#{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{datasourceId,jdbcType=INTEGER},
+		#{datasourceType,jdbcType=INTEGER},
+		#{executeFlag,jdbcType=INTEGER},
+		#{createUser,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{updateUser,jdbcType=VARCHAR},
+		#{updateTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="updateDBLinkFlag" parameterType="com.jiuye.mcp.server.model.meta.MetaConnLinksEntity">
+		update meta_conn_links
+		set execute_flag = 1
+		where link_id = #{linkId, jdbcType=BIGINT}
+	</update>
+
+	<!-- query link_id -->
+	<select id="queryDBTable" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT
+		link_name
+		FROM meta_conn_links
+		where link_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+	<!-- query link bySourceId -->
+	<select id="queryLinkBySourceId" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		<include refid="baseLinkColumns"/>
+		FROM meta_conn_links
+		where link_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+</mapper>

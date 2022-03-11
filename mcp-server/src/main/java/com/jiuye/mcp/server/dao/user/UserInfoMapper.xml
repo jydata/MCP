@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.user.UserInfoMapper">
+
+    <resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.user.UserInfoEntity">
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="user_role" property="userRole" jdbcType="INTEGER"/>
+        <result column="user_status" property="userStatus" jdbcType="INTEGER"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        user_id, user_name, password, email, phone, user_role, user_status, create_user, create_time, update_user, update_time
+    </sql>
+
+    <!-- 根据用户登录信息查询 -->
+    <sql id="managerSelectColumns">
+        <if test='(userRole == "1")'>
+            and user_role = #{userRole}
+            <if test="(userName != null and userName !='')">
+                and user_name = #{userName}
+            </if>
+        </if>
+    </sql>
+
+    <sql id="selectColumns">
+        <if test="(userName != null and userName !='')">
+            and user_name LIKE CONCAT(CONCAT('%',#{userName}),'%')
+        </if>
+        <if test="(phone != null and phone !='')">
+            and phone LIKE CONCAT(CONCAT('%',#{phone}),'%')
+        </if>
+        <if test="(userStatus != null and userStatus !='')">
+            and user_status = #{userStatus}
+        </if>
+        <if test="(userRole != null and userRole != '')">
+            and user_role = #{userRole}
+        </if>
+    </sql>
+
+    <sql id="baseSelectColumns">
+        <if test="(userId != null and userId != 0)" >
+            and user_id = #{userId,jdbcType=BIGINT}
+        </if>
+        <if test="(userName != null and userName !='')" >
+            and user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+        <if test="(password != null and password !='')" >
+            and password = #{password,jdbcType=VARCHAR}
+        </if>
+        <if test="(email != null and email !='')" >
+            and email = #{email,jdbcType=VARCHAR}
+        </if>
+        <if test="(phone != null and phone !='')" >
+            and phone = #{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="(userStatus != null and userStatus !='')" >
+            and user_status = #{userStatus,jdbcType=INTEGER}
+        </if>
+        <if test="(createUser != null and createUser !='')" >
+            and create_user = #{createUser,jdbcType=VARCHAR}
+        </if>
+        <if test="(createTime != null and createTime !='')" >
+            and create_time >= #{createTime,jdbcType=TIMESTAMP} and <![CDATA[create_time <= #{createTime,jdbcType=TIMESTAMP}]]>
+        </if>
+        <if test="(updateUser != null and updateUser !='')" >
+            and update_user = #{updateUser,jdbcType=VARCHAR}
+        </if>
+        <if test="(updateTime != null and updateTime !='')" >
+            and update_time >= #{updateTime,jdbcType=TIMESTAMP} and <![CDATA[update_time <= #{updateTime,jdbcType=TIMESTAMP}]]>
+        </if>
+    </sql>
+
+    <!-- 根据权限加载用户数据 -->
+    <select id="queryManagerList" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM user_info
+        where 1=1
+        <include refid="managerSelectColumns"/>
+        order by update_time DESC
+    </select>
+
+    <!-- 登录用户信息 -->
+    <select id="query" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM user_info
+        where 1=1
+        <include refid="baseSelectColumns"/>
+    </select>
+
+    <!--查询按钮根据条件查询页面信息-->
+    <select id="queryList" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity" resultMap="baseResultMap">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM user_info
+        where 1 = 1
+        <include refid="selectColumns"/>
+        order by update_time DESC
+    </select>
+
+    <!-- 新增保存 -->
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity">
+		insert into user_info (user_name,email,phone,user_role,user_status,create_user,create_time,password,update_user,update_time)
+		values (
+			#{userName,jdbcType=VARCHAR},
+			#{email,jdbcType=VARCHAR},
+			#{phone,jdbcType=VARCHAR},
+			#{userRole,jdbcType=INTEGER},
+			#{userStatus,jdbcType=INTEGER},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{password,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+    <!-- 编辑 -->
+    <update id="update" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity">
+        update user_info
+        <set>
+            <if test="password != null" >password=#{password,jdbcType=VARCHAR},</if>
+            <if test="email != null" >email=#{email,jdbcType=VARCHAR},</if>
+            <if test="phone != null" >phone=#{phone,jdbcType=VARCHAR},</if>
+            <if test="userRole != null" >user_role=#{userRole,jdbcType=INTEGER},</if>
+            <if test="userStatus != null" >user_status=#{userStatus,jdbcType=INTEGER},</if>
+            <if test="updateUser != null" >update_user=#{updateUser,jdbcType=VARCHAR},</if>
+            <if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP},</if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <!-- 重置用户密码 -->
+    <update id="resetPassword" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity">
+        update user_info
+        set password = Md5(#{defaultPassword}),
+            update_user = #{updateUser},
+            update_time = #{updateTime}
+        WHERE user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <!-- 修改密码 -->
+    <update id="updatePassword" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity">
+        update user_info
+        set password = #{confirmPassword},
+            update_user = #{updateUser},
+            update_time = #{updateTime}
+        where user_name = #{userName,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 修改用户Email和Phone唯一性验证 -->
+    <select id="checkEAP" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity"
+            resultType="java.lang.Integer">
+        select count(1) as checkEAP
+          from user_info
+        where (user_name != #{userName,jdbcType=VARCHAR} and email=#{email}) or (user_name != #{userName,jdbcType=VARCHAR} and phone=#{phone})
+    </select>
+
+    <!-- 新增用户Email和Phone唯一性验证 -->
+    <select id="checkAddUser" parameterType="com.jiuye.mcp.server.model.user.UserInfoEntity"
+            resultType="java.lang.Integer">
+        select count(1) as checkAddUser
+          from user_info
+        where email=#{email} or phone=#{phone}
+    </select>
+
+</mapper>

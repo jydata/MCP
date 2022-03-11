@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobProjectMapper" >
+
+	<resultMap id="baseProjectMap" type="com.jiuye.mcp.server.model.job.JobProjectEntity">
+		<result column="project_id" property="projectId" jdbcType="BIGINT" />
+		<result column="project_name" property="projectName" jdbcType="VARCHAR" />
+		<result column="project_description" property="projectDescription" jdbcType="VARCHAR" />
+		<result column="project_agent" property="projectAgent" jdbcType="VARCHAR" />
+		<result column="execute_num" property="executeNum" jdbcType="INTEGER" />
+		<result column="success_num" property="successNum" jdbcType="INTEGER" />
+		<result column="fail_num" property="failNum" jdbcType="INTEGER" />
+		<result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="baseProjectColumns">
+        project_id, project_name, project_description, project_agent, execute_num, success_num, fail_num, delete_flag, create_user, create_time, update_user, update_time
+    </sql>
+
+	<select id="loadProjectName" resultMap="baseProjectMap">
+        select  distinct project_name, project_id
+        from job_project
+        where delete_flag = 1
+    </select>
+
+	<!-- add project -->
+	<insert id="addProject" parameterType="com.jiuye.mcp.server.model.job.JobProjectEntity">
+        insert into job_project
+        (project_name, project_description, project_agent, execute_num, success_num, fail_num, create_user, update_user)
+        values (
+			#{projectName,jdbcType=VARCHAR},
+			#{projectDescription,jdbcType=VARCHAR},
+			#{projectAgent,jdbcType=VARCHAR},
+			#{executeNum,jdbcType=INTEGER},
+			#{successNum,jdbcType=INTEGER},
+			#{failNum,jdbcType=INTEGER},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+	<!-- check exist -->
+	<select id="checkProject" parameterType="java.lang.Long" resultType="java.lang.Integer" >
+        select count(*) as count
+        from job_project
+        where  project_id = #{_parameter, jdbcType=BIGINT}
+    </select>
+
+	<!-- update project -->
+	<update id="updateProject" parameterType="com.jiuye.mcp.server.model.job.JobProjectEntity">
+		update job_project
+		<set >
+			<if test="projectName != null" >project_name=#{projectName,jdbcType=VARCHAR},</if>
+			<if test="projectDescription != null" >project_description=#{projectDescription,jdbcType=VARCHAR},</if>
+			<if test="projectAgent != null" >project_agent=#{projectAgent,jdbcType=VARCHAR},</if>
+			<if test="executeNum != 0" >execute_num=#{executeNum,jdbcType=INTEGER},</if>
+			<if test="successNum != 0" >success_num=#{successNum,jdbcType=INTEGER},</if>
+			<if test="failNum != 0" >fail_num=#{failNum,jdbcType=INTEGER},</if>
+			<if test="deleteFlag != null and deleteFlag != 0 " >delete_flag=#{deleteFlag,jdbcType=INTEGER},</if>
+			<if test="createUser != null" >create_user=#{createUser,jdbcType=VARCHAR},</if>
+			<if test="createTime != null" >create_time=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="updateUser != null" >update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP}</if>
+		</set>
+		where project_id = #{projectId,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateProjectFailNum" >
+		update job_project
+		<set >
+			fail_num = fail_num + (#{failNum,jdbcType=BIGINT})
+		</set>
+		where project_id = #{projectId,jdbcType=BIGINT}
+	</update>
+
+	<!-- delete project -->
+	<delete id="deleteProject" parameterType="java.lang.Long">
+        update job_project
+		<set >
+			delete_flag=0
+		</set>
+        where project_id=#{_parameter, jdbcType=BIGINT}
+    </delete>
+
+	<!-- query project -->
+	<select id="queryProject" parameterType="java.lang.String" resultMap="baseProjectMap">
+		select
+		<include refid="baseProjectColumns" />
+		from job_project
+		where 1=1
+		and delete_flag = 1
+		<if test="_parameter != null" >and project_name like CONCAT(CONCAT('%',#{_parameter,jdbcType=VARCHAR}),'%')</if>
+	</select>
+
+	<select id="queryProjectById" parameterType="java.lang.Long" resultMap="baseProjectMap">
+	select
+	<include refid="baseProjectColumns" />
+	from job_project
+	where delete_flag = 1
+	and project_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+	<!-- query agent -->
+	<select id="queryAgent" parameterType="java.lang.Long" resultType="java.lang.String">
+		select project_agent
+		from job_project
+		where project_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+
+</mapper>

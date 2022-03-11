@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaMysqlStatisticsMapper" >
+
+	<insert id="saveBatch" parameterType="java.util.List">
+		insert into meta_mysql_statistics
+		(src_id, table_catalog, table_schema, table_name, non_unique, index_schema,
+		index_name, seq_in_index, column_name, collation, cardinality,
+		sub_part, packed, nullable, index_type, comment, index_comment)
+		values
+		<foreach collection="list" item="indexInfo" index="index" separator=",">
+			(
+			#{indexInfo.srcId,jdbcType=INTEGER},
+			#{indexInfo.tableCatalog, jdbcType=VARCHAR},
+			#{indexInfo.tableSchema, jdbcType=VARCHAR},
+			#{indexInfo.tableName, jdbcType=VARCHAR},
+			#{indexInfo.nonUnique, jdbcType=BIGINT},
+			#{indexInfo.indexSchema, jdbcType=VARCHAR},
+			#{indexInfo.indexName, jdbcType=VARCHAR},
+			#{indexInfo.seqInIndex, jdbcType=BIGINT},
+			#{indexInfo.columnName, jdbcType=VARCHAR},
+			#{indexInfo.collation, jdbcType=VARCHAR},
+			#{indexInfo.cardinality, jdbcType=BIGINT},
+			#{indexInfo.subPart, jdbcType=BIGINT},
+			#{indexInfo.packed, jdbcType=VARCHAR},
+			#{indexInfo.nullable, jdbcType=VARCHAR},
+			#{indexInfo.indexType, jdbcType=VARCHAR},
+			#{indexInfo.comment, jdbcType=VARCHAR},
+			#{indexInfo.indexComment, jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="delete">
+		DELETE FROM meta_mysql_statistics WHERE
+		<foreach collection="syncList" item="item" separator=" OR ">
+			(src_id = #{srcId,jdbcType=BIGINT}
+			AND table_schema = #{item.dbName,jdbcType=VARCHAR}
+			AND table_name = #{item.tableName,jdbcType=VARCHAR})
+		</foreach>
+	</delete>
+
+</mapper>

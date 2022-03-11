@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.sys.SysDictMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.DictEntity" >
+	    <result column="dict_id" property="dictId" jdbcType="BIGINT" />
+	    <result column="dict_name" property="dictName" jdbcType="VARCHAR" />
+	    <result column="database_flag" property="databaseFlag" jdbcType="VARCHAR" />
+	    <result column="database_type" property="databaseType" jdbcType="INTEGER" />
+	    <result column="dict_flag" property="dictFlag" jdbcType="INTEGER" />
+	    <result column="comment" property="comment" jdbcType="VARCHAR" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="baseColumns">
+        dict_id, dict_name, database_flag, database_type, dict_flag, comment, create_time, update_time
+    </sql>
+	
+	<sql id="baseSelectColumns">
+		<if test="(dictId != null and dictId !='')" >
+			and dict_id = #{dictId}
+		</if>
+		<if test="(dictName != null and dictName !='')" >
+			and dict_name = #{dictName}
+		</if>
+		<if test="(databaseFlag != null and databaseFlag !='')" >
+			and database_flag = #{databaseFlag}
+		</if>
+		<if test="(databaseType != null and databaseType !='')" >
+			and database_type = #{databaseType}
+		</if>
+		<if test="(dictFlag != null and dictFlag !='')" >
+			and dict_flag = #{dictFlag}
+		</if>
+		<if test="(comment != null and comment !='')" >
+			and comment = #{comment}
+		</if>
+		<if test="(createTime != null and createTime !='')" >
+			and create_time >= #{createTime} and create_time <![CDATA[<=]]> #{createTime}
+		</if>
+		<if test="(updateTime != null and updateTime !='')" >
+			and update_time >= #{updateTime} and update_time <![CDATA[<=]]> #{updateTime}
+		</if>
+    </sql>
+
+	<select id="queryDatabaseName" parameterType="com.jiuye.mcp.server.model.meta.DictEntity" resultMap="baseResultMap">
+		SELECT dict_id, dict_name, database_flag, database_type,
+		date_format(create_time, '%Y-%m-%d %H:%i:%S') as createTime,
+		date_format(update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+		FROM sys_dict
+		WHERE 1=1
+		and dict_flag = 1
+		<if test="dictName != null and dictName != ''">
+			and dict_name = #{dictName,jdbcType=VARCHAR}
+		</if>
+		<if test='databaseType != null and flag != null and flag != "3"'>
+			and database_type = #{databaseType,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<select id="queryDistinctNameList" parameterType="com.jiuye.mcp.server.model.meta.DictEntity" resultMap="baseResultMap">
+		SELECT DISTINCT dict_name
+		FROM sys_dict
+		WHERE 1=1
+		and dict_flag = 1
+		<if test="(databaseType != null)">
+			and database_type = #{databaseType,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<!--Rules Type-->
+	<select id="queryRulesType" parameterType="java.lang.String" resultMap="baseResultMap">
+		SELECT distinct dict_name
+		FROM sys_dict
+		WHERE dict_flag = 2
+	</select>
+
+	<select id="queryDistinctName" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT distinct dict_name
+		FROM sys_dict
+		WHERE dict_flag = #{dictFlag,jdbcType=INTEGER}
+	</select>
+
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.meta.DictEntity">
+        insert into sys_dict(dict_id, dict_name, database_flag, database_type, dict_flag, comment, create_time, update_time)
+        values (
+			#{dictId,jdbcType=BIGINT},
+			#{dictName,jdbcType=VARCHAR},
+			#{databaseFlag,jdbcType=VARCHAR},
+			#{databaseType,jdbcType=INTEGER},
+			#{dictFlag,jdbcType=INTEGER},
+			#{comment,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.jiuye.mcp.server.model.meta.DictEntity">
+        update sys_dict 
+		<set >
+			<if test="dictName != null" >dict_name=#{dictName,jdbcType=VARCHAR},</if>
+			<if test="databaseFlag != null" >database_flag=#{databaseFlag,jdbcType=VARCHAR},</if>
+			<if test="databaseType != null" >database_type=#{databaseType,jdbcType=INTEGER},</if>
+			<if test="dictFlag != null" >dict_flag=#{dictFlag,jdbcType=INTEGER},</if>
+			<if test="comment != null" >comment=#{comment,jdbcType=VARCHAR},</if>
+			<if test="createTime != null" >create_time=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP},</if>
+		</set>
+        where dict_id=#{dictId, jdbcType=BIGINT}
+    </update>
+
+</mapper>

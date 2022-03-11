@@ -1,0 +1,12 @@
+/.settings/
+.project
+.classpath
+/target/
+/bin/
+*.iml
+/.idea/
+*.bat
+node_modules/
+/mcp-agent/target/
+/mcp-common/target/
+/mcp-server/target/

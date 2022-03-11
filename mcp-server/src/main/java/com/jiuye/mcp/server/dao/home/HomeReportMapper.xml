@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.home.HomeReportMapper" >
+    <resultMap id="HomeCommonResultMap" type="com.jiuye.mcp.server.model.home.HomeFinenessStatisticEntity">
+        <result column="fineness_rate" property="finenessRate" jdbcType="VARCHAR" />
+        <result column="normal" property="normalCount" jdbcType="INTEGER" />
+        <result column="critical" property="warnCount" jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="queryFinenessStatis" resultMap="HomeCommonResultMap">
+        select a.fineness_rate,
+               sum(case when diff_counts =  0 then 1 else 0 end) as normal,
+               sum(case when diff_counts != 0 then 1 else 0 end) as critical
+          from bdmp_check_data_count_rs a
+          left join (select fineness_rate,max(check_date) as check_date from bdmp_check_data_count_rs group by fineness_rate ) c
+            on a.check_date = c.check_date
+           and a.fineness_rate = c.fineness_rate
+         where c.check_date is not null
+         group by a.fineness_rate
+    </select>
+</mapper>

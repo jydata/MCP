@@ -1,0 +1,44 @@
+{
+  "code": "SUCCESS",
+  "message": "",
+  "items":[
+    {
+      "menuName": "Metadata",
+      "menuUrl": "/meta",
+      "childrens": [
+        {
+          "menuName": "DS Connections",
+          "menuUrl": "/meta/DSConnections"
+        },
+        {
+          "menuName": "DS Rules",
+          "menuUrl": "/meta/DSRules"
+        },
+        {
+          "menuName": "Generate Target DDL",
+          "menuUrl": "/meta/GenerateTargetDDL"
+        }
+      ]
+    },
+    {
+      "menuName": "Project",
+      "menuUrl": "/project",
+      "childrens": [
+        {
+          "menuName": "Project List",
+          "menuUrl": "/project/ProjectList"
+        }
+      ]
+    },
+     {
+      "menuName": "User",
+      "menuUrl": "/user",
+      "childrens": [
+        {
+          "menuName": "User List",
+          "menuUrl": "/user/UserList"
+        }
+      ]
+    }
+  ]
+}

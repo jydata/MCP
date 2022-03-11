@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.home.HomePageMapper" >
+
+	<resultMap id="HomeCommonResultMap" type="com.jiuye.mcp.server.model.home.HomeCommonEntity">
+	    <result column="typeName" property="name" jdbcType="VARCHAR" />
+	    <result column="typeCount" property="value" jdbcType="BIGINT" />
+    </resultMap>
+
+    <select id="queryJobs" resultMap="HomeCommonResultMap">
+		select status as typeName, count(1) as typeCount
+		  from job_define
+		 where delete_flag = 1
+		 group by status
+    </select>
+
+    <select id="queryTechDatas" resultMap="HomeCommonResultMap">
+		select 'Sources' as typeName, count(link_id) as typeCount from meta_conn_links where datasource_type = 0
+		 union all
+		select 'Targets' as typeName, count(link_id) as typeCount from meta_conn_links where datasource_type = 1
+		 union all
+		select 'Routes' as typeName, count(route_id) as typeCount from meta_dataroute where route_status = 1
+    </select>
+
+
+    <resultMap id="HomeTableCountMap" type="com.jiuye.mcp.server.model.home.HomeTableCountEntity">
+        <result column="projectname" property="projectName" jdbcType="VARCHAR"/>
+        <result column="mysql_database" property="sourceDb" jdbcType="VARCHAR"/>
+        <result column="mysql_tablename" property="sourceTb" jdbcType="VARCHAR"/>
+        <result column="mysql_counts" property="sourceCount" jdbcType="INTEGER"/>
+        <result column="phoenix_namespace" property="targetDb" jdbcType="VARCHAR"/>
+        <result column="phoenix_tablename" property="targetTb" jdbcType="VARCHAR"/>
+        <result column="phoenix_counts" property="targetCount" jdbcType="INTEGER"/>
+        <result column="diff_counts" property="diffCount" jdbcType="INTEGER"/>
+        <result column="time_area" property="timeArea" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="queryHotTables" resultMap="HomeTableCountMap">
+        select b.projectname,
+               b.mysql_database,
+               b.mysql_tablename,
+               a.mysql_counts,
+               b.phoenix_namespace,
+               b.phoenix_tablename,
+               phoenix_counts,
+               a.diff_counts,
+               a.time_area
+          from bdmp_check_data_count_rs a
+          left join bdmp_meta_table_list b
+            on a.listid = b.id
+          left join (select max(check_date) as check_date from bdmp_check_data_count_rs where fineness_rate = #{_parameter, jdbcType=VARCHAR} ) c
+            on a.check_date = c.check_date
+         where c.check_date is not null
+         order by a.mysql_counts desc limit 10
+    </select>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobGroupMapper" >
+
+	<resultMap id="baseGroupMap" type="com.jiuye.mcp.server.model.job.JobGroupEntity">
+		<result column="group_id" property="groupId" jdbcType="BIGINT" />
+		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
+		<result column="project_id" property="projectId" jdbcType="BIGINT" />
+		<result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+		<result column="create_user" property="createUser" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="VARCHAR" />
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="baseGroupColumns">
+        group_id, group_name, project_id, delete_flag, create_user, create_time, update_user, update_time
+    </sql>
+
+	<!-- query unique group -->
+	<select id="queryGroupInfo" parameterType="java.lang.Long" resultMap="baseGroupMap">
+		select
+		<include refid="baseGroupColumns" />
+		from job_group
+		where project_id = #{_parameter,jdbcType=BIGINT}
+		and delete_flag = 1
+	</select>
+
+	<!-- check group -->
+	<select id="checkGroup" parameterType="com.jiuye.mcp.server.model.job.JobGroupEntity" resultType="java.lang.Integer">
+		select count(1) as count
+		from job_group
+		where group_name = #{groupName, jdbcType=VARCHAR}
+		and project_id = #{projectId, jdbcType=BIGINT}
+	</select>
+
+	<!-- add group -->
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.job.JobGroupEntity" useGeneratedKeys="true" keyProperty="groupId">
+		insert into job_group
+        (group_name, project_id, delete_flag, create_user, update_user)
+        values (
+        	#{groupName,jdbcType=VARCHAR},
+			#{projectId,jdbcType=BIGINT},
+			#{deleteFlag,jdbcType=TINYINT},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR}
+        )
+	</insert>
+
+	<!-- delete group -->
+	<update id="deleteGroupByProjectId" parameterType="java.lang.Long">
+		update job_group
+		<set >
+			delete_flag=0
+		</set>
+		where project_id=#{_parameter, jdbcType=BIGINT}
+	</update>
+
+</mapper>

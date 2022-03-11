@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobSyncTableMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.job.JobSyncTableEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="id" property="id" jdbcType="BIGINT" />
+	    <result column="job_id" property="jobId" jdbcType="BIGINT" />
+	    <result column="schema_name" property="schemaName" jdbcType="VARCHAR" />
+	    <result column="db_name" property="dbName" jdbcType="VARCHAR" />
+	    <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+	    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+		<result column="column_name" property="columnName" jdbcType="VARCHAR" />
+		<result column="begin_time" property="beginTime" jdbcType="VARCHAR" />
+		<result column="end_time" property="endTime" jdbcType="VARCHAR" />
+	    <result column="where_clause" property="whereClause" jdbcType="VARCHAR" />
+		<result column="ddl_rule_id" property="ddlRuleId" jdbcType="BIGINT" />
+	    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<sql id="baseColumns">
+        id, job_id, schema_name, db_name, table_name, delete_flag, column_name, begin_time, end_time, where_clause, ddl_rule_id, create_time, create_user
+    </sql>
+	
+	<sql id="baseSelectColumns">
+		<if test="(id != null and id !='')" >
+			and id = #{id}
+		</if>
+		<if test="(jobId != null and jobId !='')" >
+			and job_id = #{jobId}
+		</if>
+		<if test="(schemaName != null and schemaName !='')" >
+			and schema_name = #{schemaName}
+		</if>
+		<if test="(dbName != null and dbName !='')" >
+			and db_name = #{dbName}
+		</if>
+		<if test="(tableName != null and tableName !='')" >
+			and table_name = #{tableName}
+		</if>
+		<if test="(deleteFlag != null and deleteFlag !='')" >
+			and delete_flag = #{deleteFlag}
+		</if>
+		<if test="(columnName != null and columnName !='')" >
+			and column_name = #{columnName}
+		</if>
+		<if test="(whereClause != null and whereClause !='')" >
+			and where_clause = #{whereClause}
+		</if>
+		<if test="(ddlRuleId != null and ddlRuleId !='')" >
+			and ddl_rule_id = #{ddlRuleId}
+		</if>
+		<if test="(createTime != null and createTime !='')" >
+			and create_time >= #{createTime} and <![CDATA[create_time <= #{createTime}]]>
+		</if>
+		<if test="(createUser != null and createUser !='')" >
+			and create_user = #{createUser}
+		</if>
+    </sql>
+	  
+    <select id="query" parameterType="com.jiuye.mcp.server.model.job.JobSyncTableEntity" resultMap="baseResultMap">
+        select
+        	<include refid="baseColumns" />
+        from job_sync_table
+        where 1=1
+		<include refid="baseSelectColumns" />
+    </select>
+
+	<select id="querySyncTableByJobId" resultType="java.lang.String">
+		SELECT CONCAT_WS(".",db_name,table_name)
+		FROM job_sync_table
+		WHERE job_id = #{jobId, jdbcType=BIGINT}
+		and delete_flag = 1
+		<if test="srcDb != null and srcDb != '' ">
+			AND db_name = #{srcDb,jdbcType=VARCHAR}
+		</if>
+		<if test="srcTable != null and srcTable != '' ">
+			AND table_name = #{srcTable,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.job.JobSyncTableEntity">
+        insert into job_sync_table(job_id, schema_name, db_name, table_name, delete_flag, column_name, begin_time, end_time, where_clause, ddl_rule_id, create_time, create_user)
+        values (
+			#{jobId,jdbcType=BIGINT},
+			#{schemaName,jdbcType=VARCHAR},
+			#{dbName,jdbcType=VARCHAR},
+			#{tableName,jdbcType=VARCHAR},
+			#{deleteFlag,jdbcType=BIT},
+			#{columnName,jdbcType=VARCHAR},
+			#{beginTime,jdbcType=VARCHAR},
+			#{endTime,jdbcType=VARCHAR},
+			#{whereClause,jdbcType=VARCHAR},
+			#{ddlRuleId,jdbcType=BIGINT},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{createUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+	<insert id="saveBatch" parameterType="java.util.List">
+		insert into job_sync_table(job_id, schema_name, db_name, table_name, delete_flag, column_name, begin_time, end_time, where_clause, ddl_rule_id, create_time, create_user)
+		values
+		<foreach collection="list" item="jobTable" separator=",">
+			(
+			#{jobTable.jobId,jdbcType=BIGINT},
+			#{jobTable.schemaName,jdbcType=VARCHAR},
+			#{jobTable.dbName,jdbcType=VARCHAR},
+			#{jobTable.tableName,jdbcType=VARCHAR},
+			#{jobTable.deleteFlag,jdbcType=INTEGER},
+			#{jobTable.columnName,jdbcType=VARCHAR},
+			#{jobTable.beginTime,jdbcType=VARCHAR},
+			#{jobTable.endTime,jdbcType=VARCHAR},
+			#{jobTable.whereClause,jdbcType=VARCHAR},
+			#{jobTable.ddlRuleId,jdbcType=BIGINT},
+			#{jobTable.createTime,jdbcType=TIMESTAMP},
+			#{jobTable.createUser,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+    <update id="update" parameterType="com.jiuye.mcp.server.model.job.JobSyncTableEntity">
+        update job_sync_table
+		<set >
+			<if test="jobId != null" >job_id=#{jobId,jdbcType=BIGINT},</if>
+			<if test="schemaName != null" >schema_name=#{schemaName,jdbcType=VARCHAR},</if>
+			<if test="dbName != null" >db_name=#{dbName,jdbcType=VARCHAR},</if>
+			<if test="tableName != null" >table_name=#{tableName,jdbcType=VARCHAR},</if>
+			<if test="deleteFlag != null" >delete_flag=#{deleteFlag,jdbcType=BIT},</if>
+			<if test="columnName != null" >column_name=#{columnName,jdbcType=VARCHAR},</if>
+			<if test="beginTime != null" >begin_time=#{beginTime,jdbcType=VARCHAR},</if>
+			<if test="endTime != null" >end_time=#{endTime,jdbcType=VARCHAR},</if>
+			<if test="whereClause != null" >where_clause=#{whereClause,jdbcType=VARCHAR},</if>
+			<if test="ddlRuleId != null" >ddl_rule_id=#{ddlRuleId,jdbcType=BIGINT},</if>
+			<if test="createTime != null" >create_time=#{createTime,jdbcType=TIMESTAMP},</if>
+			<if test="createUser != null" >create_user=#{createUser,jdbcType=VARCHAR},</if>
+		</set>
+        where id=#{id}
+    </update>
+
+	<update id="updateJobSyncTables">
+		update job_sync_table
+		<set >
+			delete_flag=0
+		</set>
+		where job_id=#{jobId, jdbcType=BIGINT}
+		<if test="srcDb != '' and srcDb != null">
+			AND src_db = #{srcDb,jdbcType=VARCHAR}
+		</if>
+		<if test="srcTable != '' and srcTable != null">
+			AND src_table = #{srcTable,jdbcType=VARCHAR}
+		</if>
+	</update>
+
+	<delete id="deleteByJobId" parameterType="java.lang.Long">
+		delete from job_sync_table where job_id=#{jobId, jdbcType=BIGINT}
+	</delete>
+
+</mapper>

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.job.JobDefinitionMapper" >
+
+    <resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.job.JobDefineEntity">
+        <result column="job_id" property="jobId" jdbcType="BIGINT" />
+        <result column="job_name" property="jobName" jdbcType="VARCHAR" />
+        <result column="job_type" property="jobType" jdbcType="VARCHAR" />
+        <result column="cron" property="cron" jdbcType="VARCHAR" />
+        <result column="project_id" property="projectId" jdbcType="BIGINT" />
+        <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+        <result column="route_id" property="routeId" jdbcType="BIGINT" />
+        <result column="route_name" property="routeName" jdbcType="VARCHAR" />
+        <result column="source_id" property="sourceId" jdbcType="BIGINT" />
+        <result column="source_name" property="sourceName" jdbcType="VARCHAR" />
+        <result column="group_id" property="groupId" jdbcType="BIGINT" />
+        <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+        <result column="src_db" property="srcDb" jdbcType="VARCHAR" />
+        <result column="src_table" property="srcTable" jdbcType="VARCHAR" />
+        <result column="target_id" property="targetId" jdbcType="BIGINT" />
+        <result column="target_name" property="targetName" jdbcType="VARCHAR" />
+        <result column="target_schema_id" property="targetSchemaId" jdbcType="BIGINT" />
+        <result column="schema_name" property="schemaName" jdbcType="VARCHAR" />
+        <result column="rule_id" property="ruleId" jdbcType="VARCHAR" />
+        <result column="rule_name" property="ruleName" jdbcType="BIGINT" />
+        <result column="bus_start_time" property="busStartTime" jdbcType="TIMESTAMP" />
+        <result column="bus_end_time" property="busEndTime" jdbcType="TIMESTAMP" />
+        <result column="binlog_name" property="binlogName" jdbcType="VARCHAR" />
+        <result column="binlog_position" property="binlogPosition" jdbcType="BIGINT" />
+        <result column="recent_binlog" property="recentBinlog" jdbcType="VARCHAR" />
+        <result column="recent_binlog_name" property="recentBinlogName" jdbcType="VARCHAR" />
+        <result column="recent_binlog_position" property="recentBinlogPosition" jdbcType="BIGINT" />
+        <result column="enable" property="enable" jdbcType="BIT" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="progress_rate" property="progressRate" jdbcType="VARCHAR" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+        <result column="duration" property="duration" jdbcType="VARCHAR" />
+        <result column="schedule_type" property="scheduleType" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="baseColumns">
+        job_id,job_name,job_type,project_id,group_id,group_name,cron,route_id,src_db,src_table,source_id,source_name,target_id,target_schema_id,rule_id,bus_start_time,bus_end_time,binlog_name,binlog_position,recent_binlog,recent_binlog_name,recent_binlog_position,enable,status,progress_rate,delete_flag,create_time,create_user,update_time,update_user
+    </sql>
+
+    <sql id="baseSelectColumns">
+        <if test="(jobId != null and jobId != 0)" >
+            and job_id = #{jobId}
+        </if>
+        <if test="(jobName != null and jobName !='')" >
+            and job_name like CONCAT(CONCAT('%', #{jobName}), '%')
+        </if>
+        <if test="(jobType != null and jobType !='')" >
+            and job_type = #{jobType}
+        </if>
+        <if test="(cron != null and cron !='')" >
+            and cron = #{cron}
+        </if>
+        <if test="(routeId != null and routeId != 0)" >
+            and route_id = #{routeId}
+        </if>
+        <if test="(busStartTime != null and busStartTime !='')" >
+            and bus_start_time >= #{busStartTime} and bus_start_time <![CDATA[<=]]> #{busStartTime}
+        </if>
+        <if test="(busEndTime != null and busEndTime !='')" >
+            and bus_end_time >= #{busEndTime} and bus_end_time <![CDATA[<=]]> #{busEndTime}
+        </if>
+        <if test="(recentBinlog != null and recentBinlog !='')" >
+            and recent_binlog = #{recentBinlog}
+        </if>
+        <if test="(binlogName != null and binlogName !='')" >
+            and binlog_name = #{binlogName}
+        </if>
+        <if test="(binlogPosition != null and binlogPosition !='')" >
+            and binlog_position = #{binlogPosition}
+        </if>
+        <if test="(recentBinlogName != null and recentBinlogName !='')" >
+            and recent_binlog_name = #{recentBinlogName}
+        </if>
+        <if test="(recentBinlogPosition != null and recentBinlogPosition !='')" >
+            and recent_binlog_position = #{recentBinlogPosition}
+        </if>
+        <if test="(enable != null and enable !='')" >
+            and enable = #{enable}
+        </if>
+        <if test="(status != null and status !='')" >
+            and status = #{status}
+        </if>
+        <if test="(progressRate != null and progressRate !='')" >
+            and progress_rate = #{progressRate}
+        </if>
+        <if test="(deleteFlag != null and deleteFlag !='')" >
+            and delete_flag = #{deleteFlag}
+        </if>
+        <if test="(createTime != null and createTime !='')" >
+            and create_time >= #{createTime} and create_time <![CDATA[<=]]> #{createTime}
+        </if>
+        <if test="(createUser != null and createUser !='')" >
+            and create_user = #{createUser}
+        </if>
+        <if test="(updateTime != null and updateTime !='')" >
+            and update_time >= #{updateTime} and update_time <![CDATA[<=]]> #{updateTime}
+        </if>
+        <if test="(updateUser != null and updateUser !='')" >
+            and update_user = #{updateUser}
+        </if>
+        <if test="(projectId != null and projectId != 0)" >
+            and project_id = #{projectId}
+        </if>
+    </sql>
+
+    <select id="query" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns" />
+        from job_define
+        where 1=1
+        <include refid="baseSelectColumns" />
+    </select>
+
+    <select id="queryJob" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity" resultMap="baseResultMap">
+        select
+        j.job_id, j.job_name, j.job_type, j.project_id, j.group_id, j.group_name, j.cron, j.route_id, m.route_name, j.src_db, j.src_table, j.source_id, j.source_name, j.target_id, m.target_name, j.target_schema_id, s.schema_name, j.rule_id, r.rule_name, j.bus_start_time, j.bus_end_time, j.binlog_name, j.binlog_position, j.recent_binlog, j.recent_binlog_name, j.recent_binlog_position, j.enable, j.status, j.progress_rate, j.delete_flag, j.create_time, j.create_user, j.update_time, j.update_user
+        from job_define j
+        left join meta_dataroute m
+        on j.route_id = m.route_id
+        left join meta_target_schema s
+        on  j.target_schema_id = s.schema_id
+        left join meta_rules r
+        on j.rule_id = r.rule_id
+        where 1=1
+        <if test="(jobId != null and jobId != 0)" >
+            and j.job_id = #{jobId}
+        </if>
+        <if test="(jobName != null and jobName !='')" >
+            and j.job_name like CONCAT(CONCAT('%', #{jobName}), '%')
+        </if>
+        <if test="(jobType != null and jobType !='')" >
+            and j.job_type = #{jobType}
+        </if>
+        <if test="(cron != null and cron !='')" >
+            and j.cron = #{cron}
+        </if>
+        <if test="(routeId != null and routeId != 0)" >
+            and j.route_id = #{routeId}
+        </if>
+        <if test="(busStartTime != null and busStartTime !='')" >
+            and j.bus_start_time >= #{busStartTime} and <![CDATA[bus_start_time <= #{busStartTime}]]>
+        </if>
+        <if test="(busEndTime != null and busEndTime !='')" >
+            and j.bus_end_time >= #{busEndTime} and <![CDATA[bus_end_time <= #{busEndTime}]]>
+        </if>
+        <if test="(recentBinlog != null and recentBinlog !='')" >
+            and j.recent_binlog = #{recentBinlog}
+        </if>
+        <if test="(binlogName != null and binlogName !='')" >
+            and j.binlog_name = #{binlogName}
+        </if>
+        <if test="(binlogPosition != null and binlogPosition !='')" >
+            and j.binlog_position = #{binlogPosition}
+        </if>
+        <if test="(recentBinlogName != null and recentBinlogName !='')" >
+            and j.recent_binlog_name = #{recentBinlogName}
+        </if>
+        <if test="(recentBinlogPosition != null and recentBinlogPosition !='')" >
+            and j.recent_binlog_position = #{recentBinlogPosition}
+        </if>
+        <if test="(enable != null and enable !='')" >
+            and j.enable = #{enable}
+        </if>
+        <if test="(status != null and status !='')" >
+            and j.status = #{status}
+        </if>
+        <if test="(progressRate != null and progressRate !='')" >
+            and j.progress_rate = #{progressRate}
+        </if>
+        <if test="(createTime != null and createTime !='')" >
+            and j.create_time >= #{createTime} and <![CDATA[create_time <= #{createTime}]]>
+        </if>
+        <if test="(createUser != null and createUser !='')" >
+            and j.create_user = #{createUser}
+        </if>
+        <if test="(updateTime != null and updateTime !='')" >
+            and j.update_time >= #{updateTime} and <![CDATA[update_time <= #{updateTime}]]>
+        </if>
+        <if test="(updateUser != null and updateUser !='')" >
+            and j.update_user = #{updateUser}
+        </if>
+        <if test="(projectId != null and projectId != 0)" >
+            and j.project_id = #{projectId}
+        </if>
+        and j.delete_flag = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="queryRestoreJob" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns" />
+        from job_define
+        where delete_flag = #{deleteFlag}
+        AND status in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+    </select>
+
+    <select id="queryById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns" />
+        from job_define
+        where job_id=#{jobId, jdbcType=BIGINT}
+    </select>
+
+    <!-- query job name -->
+    <select id="queryByName" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity" resultMap="baseResultMap">
+        select
+        <include refid="baseColumns" />
+        from job_define
+        where job_name = #{jobName,jdbcType=VARCHAR}
+        <if test="jobId != null"> and job_id != #{jobId,jdbcType=BIGINT}</if>
+    </select>
+
+    <select id="checkJobRunning" resultType="java.lang.Integer">
+        select count(job_id) as runningCount
+        from job_define
+        where route_id = #{routeId, jdbcType=BIGINT}
+        and status = 'running'
+        and job_type = 'ddl'
+        and job_id != #{jobId, jdbcType=BIGINT}
+        and src_db in
+        <foreach collection="srcDbList" item="srcDb" open="(" close=")" separator=",">
+            #{srcDb, jdbcType=VARCHAR}
+        </foreach>
+    </select>
+
+    <select id="checkIncreAndFullJobRunning" resultType="java.lang.Integer">
+        select count(job_id) as runningCount
+        from job_define
+        where route_id = #{routeId, jdbcType=BIGINT}
+        and status = 'running'
+        and job_type in ('increment', 'full')
+        and job_id != #{jobId, jdbcType=BIGINT}
+    </select>
+
+    <insert id="save" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity" useGeneratedKeys="true" keyProperty="jobId">
+        insert into job_define(job_name, job_type, project_id, group_id, group_name, cron, route_id, src_db, src_table, source_id, source_name, target_id, target_schema_id, rule_id, bus_start_time, bus_end_time, recent_binlog, binlog_name, binlog_position, recent_binlog_name, recent_binlog_position, enable, status, progress_rate, delete_flag, create_user, update_user)
+        values (
+			#{jobName,jdbcType=VARCHAR},
+			#{jobType,jdbcType=VARCHAR},
+			#{projectId,jdbcType=BIGINT},
+			#{groupId,jdbcType=BIGINT},
+			#{groupName,jdbcType=VARCHAR},
+			#{cron,jdbcType=VARCHAR},
+			#{routeId,jdbcType=BIGINT},
+			#{srcDb,jdbcType=VARCHAR},
+			#{srcTable,jdbcType=VARCHAR},
+			#{sourceId,jdbcType=INTEGER},
+			#{sourceName,jdbcType=VARCHAR},
+			#{targetId,jdbcType=BIGINT},
+			#{targetSchemaId,jdbcType=BIGINT},
+			#{ruleId,jdbcType=BIGINT},
+			#{busStartTime,jdbcType=TIMESTAMP},
+			#{busEndTime,jdbcType=TIMESTAMP},
+			#{recentBinlog,jdbcType=VARCHAR},
+			#{binlogName,jdbcType=VARCHAR},
+			#{binlogPosition,jdbcType=BIGINT},
+			#{recentBinlog,jdbcType=VARCHAR},
+			#{binlogPosition,jdbcType=BIGINT},
+			#{enable,jdbcType=BIT},
+			#{status,jdbcType=VARCHAR},
+			#{progressRate,jdbcType=VARCHAR},
+			#{deleteFlag,jdbcType=BIT},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity">
+        update job_define
+        <set>
+            <if test="jobName != null">job_name = #{jobName,jdbcType=VARCHAR},</if>
+            <if test="jobType != null">job_type = #{jobType,jdbcType=VARCHAR},</if>
+            <if test="projectId != 0 and projectId != null">project_id = #{projectId,jdbcType=BIGINT},</if>
+            <if test="groupId != 0 and groupId != null" >group_id = #{groupId,jdbcType=BIGINT},</if>
+            <if test="groupName != null">group_name = #{groupName,jdbcType=VARCHAR},</if>
+            <if test="cron != null">cron = #{cron,jdbcType=VARCHAR},</if>
+            <if test="routeId != 0 and routeId != null">route_id = #{routeId,jdbcType=BIGINT},</if>
+            <if test="srcDb != null">src_db = #{srcDb,jdbcType=VARCHAR},</if>
+            <if test="sourceId != null and sourceId != 0">source_id = #{sourceId,jdbcType=BIGINT},</if>
+            <if test="sourceName != null">source_name = #{sourceName,jdbcType=VARCHAR},</if>
+            <if test="targetId != null and targetId != 0">target_id = #{targetId,jdbcType=BIGINT},</if>
+            <if test="targetSchemaId != null and targetSchemaId != 0">target_schema_id = #{targetSchemaId,jdbcType=BIGINT},</if>
+            <if test="ruleId != null and ruleId != 0">rule_id = #{ruleId,jdbcType=BIGINT},</if>
+            <if test="busStartTime != null">bus_start_time = #{busStartTime,jdbcType=TIMESTAMP},</if>
+            <if test="busEndTime != null">bus_end_time = #{busEndTime,jdbcType=TIMESTAMP},</if>
+            <if test="recentBinlog != null">recent_binlog = #{recentBinlog,jdbcType=VARCHAR},</if>
+            <if test="binlogName != null">binlog_name = #{binlogName,jdbcType=VARCHAR},</if>
+            <if test="binlogPosition != null and binlogPosition != 0">binlog_position = #{binlogPosition,jdbcType=BIGINT},</if>
+            <if test="recentBinlog != null">recent_binlog_name = #{recentBinlog,jdbcType=VARCHAR},</if>
+            <if test="binlogPosition != null and binlogPosition != 0">recent_binlog_position = #{binlogPosition,jdbcType=BIGINT},</if>
+            <if test="status != null">status = #{status,jdbcType=VARCHAR},</if>
+            <if test="progressRate != null">progress_rate = #{progressRate,jdbcType=VARCHAR},</if>
+            <if test="createUser != null">create_user = #{createUser,jdbcType=VARCHAR},</if>
+            <if test="updateUser != null">update_user = #{updateUser,jdbcType=VARCHAR}</if>
+        </set>
+        where job_id = #{jobId, jdbcType=BIGINT}
+    </update>
+
+    <update id="updateRunning2Fail" parameterType="java.lang.String">
+        update job_define
+        set status = 'fail'
+        where delete_flag = 1
+        AND `status` in ('wait', 'ready', 'running')
+        AND ((job_type in ('increment', 'full', 'ddl')) or (job_type = 'metadata' and route_id = 0))
+    </update>
+
+    <update id="updateRecentBinlog" parameterType="com.jiuye.mcp.server.model.job.JobDefineEntity">
+        update job_define
+        <set>
+            <if test="recentBinlogName != null">recent_binlog_name = #{recentBinlogName,jdbcType=VARCHAR},</if>
+            <if test="recentBinlogPosition != null">recent_binlog_position = #{recentBinlogPosition,jdbcType=BIGINT}</if>
+        </set>
+        where job_id = #{jobId, jdbcType=BIGINT}
+    </update>
+
+    <!-- delete job -->
+    <update id="deleteJobByProjectId" parameterType="java.lang.Integer">
+        update job_define
+        <set >
+            delete_flag=0
+        </set>
+        where project_id=#{_parameter, jdbcType=BIGINT}
+    </update>
+
+    <select id="queryIncrementByProjectId" parameterType="java.lang.Long" resultType="java.lang.String">
+        select job_id
+          from mcp.job_define
+         where project_id=#{projectId, jdbcType=BIGINT}
+           and job_type = 'increment';
+    </select>
+</mapper>

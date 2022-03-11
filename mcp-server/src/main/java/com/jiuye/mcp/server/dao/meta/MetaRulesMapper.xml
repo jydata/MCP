@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaRulesMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaRulesEntity">
+		<result column="rule_id" property="ruleId" jdbcType="BIGINT"/>
+		<result column="rule_name" property="ruleName" jdbcType="VARCHAR"/>
+		<result column="rule_type" property="ruleType" jdbcType="VARCHAR"/>
+		<result column="rule_suffix" property="ruleSuffix" jdbcType="VARCHAR" />
+		<result column="rule_prefix" property="rulePrefix" jdbcType="VARCHAR"/>
+		<result column="rule_column" property="ruleColumn" jdbcType="VARCHAR"/>
+		<result column="db_flag" property="dbFlag" jdbcType="INTEGER"/>
+		<result column="begin_index" property="beginIndex" jdbcType="INTEGER"/>
+		<result column="end_index" property="endIndex" jdbcType="INTEGER"/>
+		<result column="rule_status" property="ruleStatus" jdbcType="VARCHAR"/>
+		<result column="comment" property="comment" jdbcType="VARCHAR"/>
+		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		<result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		<result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<sql id="baseColumns">
+		rule_id, rule_name, rule_type, rule_suffix, rule_prefix, rule_column, db_flag, begin_index, end_index, rule_status, comment, create_user, create_time, update_user, update_time
+	</sql>
+
+	<sql id="baseSelectColumns">
+		<if test="(ruleId != null and ruleId != 0)" >
+			and rule_id = #{ruleId}
+		</if>
+		<if test="(ruleName != null and ruleName !='')" >
+			and rule_name = #{ruleName}
+		</if>
+		<if test="(ruleType != null and ruleType !='')" >
+			and rule_type = #{ruleType}
+		</if>
+		<if test="(ruleSuffix != null and ruleSuffix !='')" >
+			and rule_suffix = #{ruleSuffix}
+		</if>
+		<if test="(rulePrefix != null and rulePrefix !='')" >
+			and rule_prefix = #{rulePrefix}
+		</if>
+		<if test="(ruleColumn != null and ruleColumn !='')" >
+			and rule_column = #{ruleColumn}
+		</if>
+		<if test="(dbFlag != null and dbFlag !='')" >
+			and db_flag = #{dbFlag}
+		</if>
+		<if test="(beginIndex != null and beginIndex !='')" >
+			and begin_index = #{beginIndex}
+		</if>
+		<if test="(endIndex != null and endIndex !='')" >
+			and end_index = #{endIndex}
+		</if>
+		<if test="(ruleStatus != null and ruleStatus !='')" >
+			and rule_status = #{ruleStatus}
+		</if>
+		<if test="(comment != null and comment !='')" >
+			and comment = #{comment}
+		</if>
+		<if test="(createUser != null and createUser !='')" >
+			and create_user = #{createUser}
+		</if>
+		<if test="(createTime != null and createTime !='')" >
+			and create_time >= #{createTime} and create_time <![CDATA[<=]]> #{createTime}
+		</if>
+		<if test="(updateUser != null and updateUser !='')" >
+			and update_user = #{updateUser}
+		</if>
+		<if test="(updateTime != null and updateTime !='')" >
+			and update_time >= #{updateTime} and update_time <![CDATA[<=]]> #{updateTime}
+		</if>
+	</sql>
+
+	<select id="query" parameterType="com.jiuye.mcp.server.model.meta.MetaRulesEntity"
+			resultMap="baseResultMap">
+		select
+		<include refid="baseColumns" />
+		from meta_rules
+		where 1=1
+		<include refid="baseSelectColumns" />
+	</select>
+
+	<!--  -->
+	<select id="queryList" resultMap="baseResultMap">
+		SELECT rule_id, rule_name, rule_type, rule_suffix, rule_prefix, rule_column, db_flag, begin_index, end_index, comment
+		FROM meta_rules
+		WHERE 1=1
+		order by rule_type, create_time desc
+	</select>
+
+	<!-- query rules -->
+	<select id="queryNameList" resultType="java.lang.String">
+		SELECT
+		rule_name
+		FROM meta_rules
+		where rule_status = 1
+	</select>
+
+	<!-- 新增Rules信息 -->
+	<insert id="save" parameterType="com.jiuye.mcp.server.model.meta.MetaRulesEntity">
+		insert into meta_rules (rule_name, rule_type, rule_suffix, rule_prefix, rule_column, db_flag, begin_index, end_index, comment, create_user, update_user)
+		values (
+			#{ruleName,jdbcType=VARCHAR},
+			#{ruleType,jdbcType=VARCHAR},
+			#{ruleSuffix,jdbcType=VARCHAR},
+			#{rulePrefix,jdbcType=VARCHAR},
+			#{ruleColumn,jdbcType=VARCHAR},
+			#{dbFlag,jdbcType=INTEGER},
+			#{beginIndex,jdbcType=INTEGER},
+			#{endIndex,jdbcType=INTEGER},
+			#{comment,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{updateUser,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 删除Rules -->
+	<delete id="delete">
+		DELETE FROM meta_rules
+		WHERE rule_name = #{ruleName, jdbcType=VARCHAR}
+	</delete>
+
+</mapper>

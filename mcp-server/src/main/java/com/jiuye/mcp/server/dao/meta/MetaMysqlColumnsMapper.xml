@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaMysqlColumnsMapper" >
+
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaMysqlColumnsEntity">
+		<result column="table_catalog" property="tableCatalog" jdbcType="VARCHAR"/>
+		<result column="table_schema" property="tableSchema" jdbcType="VARCHAR"/>
+		<result column="table_name" property="tableName" jdbcType="VARCHAR"/>
+		<result column="column_name" property="columnName" jdbcType="VARCHAR"/>
+		<result column="column_type" property="columnType" jdbcType="VARCHAR"/>
+		<result column="column_default" property="columnDefault" jdbcType="VARCHAR"/>
+		<result column="column_key" property="columnKey" jdbcType="VARCHAR"/>
+		<result column="ordinal_position" property="ordinalPosition" jdbcType="BIGINT"/>
+		<result column="is_nullable" property="isNullable" jdbcType="VARCHAR"/>
+		<result column="data_type" property="dataType" jdbcType="VARCHAR"/>
+		<result column="character_maximum_ength" property="characterMaximumLength" jdbcType="BIGINT"/>
+		<result column="character_octet_length" property="characterOctetLength" jdbcType="BIGINT"/>
+		<result column="numeric_precision" property="numericPrecision" jdbcType="BIGINT"/>
+		<result column="numeric_scale" property="numericScale" jdbcType="BIGINT"/>
+		<result column="datetime_precision" property="datetimePrecision" jdbcType="BIGINT"/>
+		<result column="character_set_name" property="characterSetName" jdbcType="VARCHAR"/>
+		<result column="collation_name" property="collationName" jdbcType="VARCHAR"/>
+		<result column="extra" property="extra" jdbcType="VARCHAR"/>
+		<result column="privileges" property="privileges" jdbcType="VARCHAR"/>
+		<result column="column_comment" property="columnComment" jdbcType="VARCHAR"/>
+		<result column="generation_expression" property="generationExpression" jdbcType="VARCHAR"/>
+		<result column="index_name" property="indexName" jdbcType="VARCHAR"/>
+		<result column="seq_in_index" property="seqInIndex" jdbcType="VARCHAR"/>
+		<result column="index_type" property="indexType" jdbcType="VARCHAR"/>
+	</resultMap>
+  
+    <sql id="baseColumns">
+        id, src_id, table_catalog, table_schema, table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, datetime_precision, character_set_name, collation_name, column_type, column_key, extra, privileges, column_comment, generation_expression
+    </sql>
+
+	<select id="queryAllColumns" parameterType="map" resultMap="baseResultMap">
+		select table_catalog, table_schema, table_name, column_name, column_type,
+			   column_default, column_key, ordinal_position, is_nullable, data_type,
+			   character_maximum_length, character_octet_length, numeric_precision,
+			   numeric_scale, datetime_precision, character_set_name, collation_name,
+			   extra, privileges, column_comment, generation_expression,
+			   group_concat(index_name) as index_name, group_concat(seq_in_index) as seq_in_index,
+			   group_concat(index_type) as index_type
+		  from (select mc.table_catalog, mc.table_schema, mc.table_name, mc.column_name, mc.column_type,
+					   mc.column_default, mc.column_key, mc.ordinal_position, mc.is_nullable, mc.data_type,
+					   mc.character_maximum_length, mc.character_octet_length, mc.numeric_precision,
+					   mc.numeric_scale, mc.datetime_precision, mc.character_set_name, mc.collation_name,
+					   mc.extra, mc.privileges, mc.column_comment, mc.generation_expression,
+					   ms.index_name, ms.seq_in_index, ms.index_type
+				  from meta_mysql_columns as mc
+			 left join meta_mysql_statistics as ms
+					on mc.src_id = ms.src_id and mc.table_schema = ms.table_schema
+				   and mc.table_name = ms.table_name and mc.column_name = ms.column_name
+				 where mc.src_id = #{src_id} and mc.table_schema = #{table_schema} and mc.table_name = #{table_name}
+				) as t
+	  group by table_catalog, table_schema, table_name, column_name, column_type,
+			   column_default, column_key, ordinal_position, is_nullable, data_type,
+			   character_maximum_length, character_octet_length, numeric_precision,
+			   numeric_scale, datetime_precision, character_set_name, collation_name,
+			   extra, privileges, column_comment, generation_expression
+	  order by ordinal_position asc
+	</select>
+
+	<select id="queryColumns" resultMap="baseResultMap">
+		SELECT <include refid="baseColumns" />
+		FROM meta_mysql_columns
+		WHERE src_id = (SELECT source_id FROM meta_dataroute WHERE route_id = #{routeId, jdbcType=BIGINT})
+		AND data_type IN ('timestamp', 'datetime', 'date', 'time')
+		AND
+		<foreach collection="dbTableList" item="item" separator=" OR " open="(" close=")">
+			(table_schema = #{item.tableSchema,jdbcType=VARCHAR}
+			AND table_name = #{item.tableName,jdbcType=VARCHAR})
+		</foreach>
+	</select>
+
+	<insert id="saveBatch" parameterType="java.util.List">
+		insert into meta_mysql_columns
+		(src_id, table_catalog, table_schema, table_name, column_name, ordinal_position, column_default,
+		is_nullable, data_type, character_maximum_length, character_octet_length, numeric_precision,
+		numeric_scale, datetime_precision, character_set_name, collation_name, column_type, column_key,
+		extra, privileges, column_comment, generation_expression)
+		values
+		<foreach collection="list" item="colInfo" index="index" separator=",">
+			(
+			#{colInfo.srcId,jdbcType=INTEGER},
+			#{colInfo.tableCatalog, jdbcType=VARCHAR},
+			#{colInfo.tableSchema, jdbcType=VARCHAR},
+			#{colInfo.tableName, jdbcType=VARCHAR},
+			#{colInfo.columnName, jdbcType=VARCHAR},
+			#{colInfo.ordinalPosition, jdbcType=BIGINT},
+			#{colInfo.columnDefault, jdbcType=VARCHAR},
+			#{colInfo.isNullable, jdbcType=VARCHAR},
+			#{colInfo.dataType, jdbcType=VARCHAR},
+			#{colInfo.characterMaximumLength, jdbcType=BIGINT},
+			#{colInfo.characterOctetLength, jdbcType=BIGINT},
+			#{colInfo.numericPrecision, jdbcType=BIGINT},
+			#{colInfo.numericScale, jdbcType=BIGINT},
+			#{colInfo.datetimePrecision, jdbcType=BIGINT},
+			#{colInfo.characterSetName, jdbcType=VARCHAR},
+			#{colInfo.collationName, jdbcType=VARCHAR},
+			#{colInfo.columnType, jdbcType=VARCHAR},
+			#{colInfo.columnKey, jdbcType=VARCHAR},
+			#{colInfo.extra, jdbcType=VARCHAR},
+			#{colInfo.privileges, jdbcType=VARCHAR},
+			#{colInfo.columnComment, jdbcType=VARCHAR},
+			#{colInfo.generationExpression, jdbcType=BIGINT}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="delete">
+		DELETE FROM meta_mysql_columns
+		WHERE src_id = #{srcId,jdbcType=BIGINT}
+		<if test="schemaName != null">AND table_schema = #{schemaName,jdbcType=VARCHAR}</if>
+		<if test="tableName != null">AND table_name = #{tableName,jdbcType=VARCHAR}</if>
+	</delete>
+
+	<delete id="deleteBatch">
+		DELETE FROM meta_mysql_columns WHERE
+		<foreach collection="syncList" item="item" separator=" OR ">
+			(src_id = #{srcId,jdbcType=BIGINT}
+			AND table_schema = #{item.dbName,jdbcType=VARCHAR}
+			AND table_name = #{item.tableName,jdbcType=VARCHAR})
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jiuye.mcp.server.dao.meta.MetaDatarouteMapper" >
+	<resultMap id="baseResultMap" type="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity">
+		<result column="route_id" property="routeId" jdbcType="BIGINT"/>
+		<result column="route_name" property="routeName" jdbcType="VARCHAR"/>
+		<result column="source_id" property="sourceId" jdbcType="BIGINT"/>
+		<result column="source_name" property="sourceName" jdbcType="VARCHAR"/>
+		<result column="target_id" property="targetId" jdbcType="BIGINT"/>
+		<result column="target_name" property="targetName" jdbcType="VARCHAR"/>
+		<result column="createTime" property="createTime" jdbcType="VARCHAR"/>
+		<result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+		<result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+		<result column="updateTime" property="updateTime" jdbcType="VARCHAR"/>
+		<result column="route_status" property="routeStatus" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="ResultTabMap" type="com.jiuye.mcp.server.model.meta.MetaMysqlTablesEntity">
+		<result column="src_id" property="srcId" jdbcType="BIGINT"/>
+		<result column="table_schema" property="tableSchema" jdbcType="VARCHAR"/>
+		<result column="table_name" property="tableName" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<!-- route -->
+	<sql id="baseRouteColumns">
+		route_id, route_name, source_id, source_name, target_id, target_name, route_status, create_user, date_format(create_time, '%Y-%m-%d %H:%i:%S') as createTime, update_user, date_format(update_time, '%Y-%m-%d %H:%i:%S') as updateTime
+	</sql>
+
+	<sql id="baseRouteSelectColumns">
+		<if test="(routeId != null and routeId != 0)">
+			and route_id = #{routeId}
+		</if>
+		<if test="(routeName != null and routeName !='')">
+			and route_name = #{routeName}
+		</if>
+		<if test="(sourceName != null and sourceName !='')">
+			and source_name = #{sourceName}
+		</if>
+		<if test="(targetName != null and targetName !='')">
+			and target_name = #{targetName}
+		</if>
+		<if test="(routeStatus != null and routeStatus != '')">
+			and route_status  = #{routeStatus}
+		</if>
+	</sql>
+
+	<!-- 查询路由列表 -->
+	<select id="queryRouteList" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity"
+			resultMap="baseResultMap">
+		SELECT
+		<include refid="baseRouteColumns" />
+		FROM meta_dataroute
+		WHERE 1=1
+		<include refid="baseRouteSelectColumns" />
+		order by date_format(update_time, '%Y-%m-%d %H:%i:%S') desc
+	</select>
+
+	<!-- 查询路由列表 返回实体类 -->
+	<select id="queryRoute" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity"
+			resultMap="baseResultMap">
+		SELECT
+		<include refid="baseRouteColumns" />
+		FROM meta_dataroute
+		WHERE 1=1
+		<if test="(routeId != null)">
+			and route_id = #{routeId}
+		</if>
+		order by date_format(update_time, '%Y-%m-%d %H:%i:%S') desc
+	</select>
+
+	<insert id="saveRouteInfo" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity">
+		insert into meta_dataroute
+		(route_name, source_id, source_name, target_id, target_name, create_user)
+		values (
+		#{routeName,jdbcType=VARCHAR},
+		#{sourceId,jdbcType=INTEGER},
+		#{sourceName,jdbcType=VARCHAR},
+		#{targetId,jdbcType=INTEGER},
+		#{targetName,jdbcType=VARCHAR},
+		#{createUser,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="queryRouteInfo" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity"
+			resultType="java.lang.Integer">
+		SELECT count(1) as cnt FROM meta_dataroute
+		WHERE 1=1
+		AND route_status = "1"
+		AND route_name = #{routeName, jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateRouteStatus" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity">
+		update meta_dataroute
+		<set >
+			<if test="routeStatus != null" >route_status=#{routeStatus,jdbcType=VARCHAR},</if>
+			<if test="updateUser != null">update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP}</if>
+		</set>
+		where route_id = #{routeId}
+	</update>
+
+	<update id="updateRouteName" parameterType="com.jiuye.mcp.server.model.meta.MetaDatarouteEntity">
+		update meta_dataroute
+		<set >
+			<if test="routeName != null" >route_name=#{routeName,jdbcType=VARCHAR},</if>
+			<if test="updateUser != null">update_user=#{updateUser,jdbcType=VARCHAR},</if>
+			<if test="updateTime != null" >update_time=#{updateTime,jdbcType=TIMESTAMP}</if>
+		</set>
+		where route_id = #{routeId}
+	</update>
+
+	<!-- query route info -->
+	<select id="queryRouteById" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		route_id, route_name, source_id, source_name, target_id, target_name
+		FROM meta_dataroute
+		where route_id = #{routeId, jdbcType=BIGINT}
+	</select>
+
+	<!-- query route info list -->
+	<select id="queryRouteInfoList" parameterType="java.lang.Long" resultMap="baseResultMap">
+		SELECT
+		route_id, route_name, source_id, source_name, target_id, target_name
+		FROM meta_dataroute
+		where target_id = #{_parameter, jdbcType=BIGINT}
+		and route_status = 1
+	</select>
+
+	<!-- query route Id list -->
+	<select id="queryRouteId" resultMap="baseResultMap">
+		SELECT
+		route_id, route_name
+		FROM meta_dataroute
+		where route_status = 1
+	</select>
+
+	<!-- query synced tables -->
+	<select id="querySynTreeByRouteId" parameterType="java.lang.Long" resultMap="ResultTabMap">
+		SELECT
+		md.source_id as src_id, mtd.src_db_name as table_schema, mtd.src_table_name as table_name
+		FROM meta_dataroute md
+		left join meta_target_ddl mtd
+		on md.route_id = mtd.route_id
+		where mtd.route_id = #{_parameter, jdbcType=BIGINT}
+		and mtd.execute_flag = 1
+		group by md.source_id, mtd.src_db_name, mtd.src_table_name
+	</select>
+
+	<select id="querySrcAndTarLinkByRouteId" parameterType="java.lang.Long" resultType="com.jiuye.mcp.server.model.SourceRunnerParam">
+		SELECT a.route_id AS routeId, a.route_name AS routeName, a.source_id AS sourceId, a.source_name AS sourceName,
+		b.ip AS srcIp, b.port AS srcPort, b.username AS srcUsername, b.password AS srcPassword, b.db_name AS srcDbName,
+		b.driver as srcDriver, di.dict_id AS srcDatasourceId, di.dict_name AS srcDatasourceName,
+		a.target_id AS targetId, a.target_name AS targetName,
+		c.ip AS tarIp, c.port AS tarPort, c.username AS tarUsername, c.password AS tarPassword,
+		c.driver as tarDriver, c.dict_id AS tarDatasourceId, c.dict_name AS tarDatasourceName
+		FROM meta_dataroute a
+		LEFT JOIN meta_conn_links b ON a.source_id = b.link_id
+		LEFT JOIN sys_dict di ON di.dict_id = b.datasource_id
+		LEFT JOIN
+		(SELECT mcl.link_id, mcl.ip, mcl.`port`, mcl.driver, mcl.db_name, mcl.username, mcl.`password`,
+		di.dict_id, di.dict_name
+		FROM meta_conn_links mcl
+		LEFT JOIN sys_dict di ON mcl.datasource_id = di.dict_id) c
+		ON a.target_id = c.link_id
+		WHERE a.route_id = #{_parameter, jdbcType=BIGINT}
+	</select>
+</mapper>
