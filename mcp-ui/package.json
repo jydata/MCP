@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "app-root-path": "2.1.0",
-    "axios": "0.15.3",
+    "axios": "0.21.2",
     "compression-webpack-plugin": "^1.1.12",
     "css-loader": "0.26.4",
     "echarts": "^4.2.0-rc.2",
@@ -57,7 +57,7 @@
     "opn": "4.0.2",
     "ora": "1.2.0",
     "semver": "5.3.0",
-    "shelljs": "0.7.7",
+    "shelljs": "0.8.5",
     "url-loader": "0.5.8",
     "vue-happy-scroll": "^2.0.1",
     "vue-loader": "11.3.4",
