@@ -21,7 +21,7 @@
     "jsencrypt": "^3.0.0-rc.1",
     "less": "2.7.2",
     "less-loader": "2.2.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "nprogress": "0.2.0",
     "style-loader": "0.13.2",
     "vue": "^2.5.3",
