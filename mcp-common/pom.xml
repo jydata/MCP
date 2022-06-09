@@ -55,7 +55,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <springboot.version>1.5.9.RELEASE</springboot.version>
+        <springboot.version>2.5.12</springboot.version>
         <spring-context-support.version>4.3.8.RELEASE</spring-context-support.version>
         <servlet.version>2.5</servlet.version>
         <druid.version>1.1.11</druid.version>
