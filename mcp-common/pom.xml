@@ -68,7 +68,7 @@
         <netty.version>4.1.42.Final</netty.version>
         <protobuf.version>2.5.0</protobuf.version>
         <jackson.version>2.12.6.1</jackson.version>
-        <fastjson.version>1.2.79</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <validation.version>1.1.0.Final</validation.version>
         <slf4j.version>1.7.25</slf4j.version>
         <phoenix.version>4.14.1-cdh5.16.1</phoenix.version>
